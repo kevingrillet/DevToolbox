@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Icône maskable : le motif tient dans la « safe zone » centrale (~80 %),
+       le fond plein occupe tout le canevas pour le rognage adaptatif. -->
+  <rect width="32" height="32" fill="#4f46e5" />
+  <g fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M13 12 L9 16 L13 20" />
+    <path d="M19 12 L23 16 L19 20" />
+    <path d="M17 10.5 L15 21.5" />
+  </g>
+</svg>

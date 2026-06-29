@@ -1,0 +1,130 @@
+# Changelog
+
+Toutes les modifications notables de ce projet sont consignées ici.
+Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
+
+## [0.1.0]
+
+### Ajouts (finalisation v1)
+
+- **Nouvel outil : Visualiseur CSV** (`/csv-viewer`) — parser maison (guillemets,
+  échappements `""`, sauts de ligne dans les champs), détection du délimiteur,
+  table **triable par colonne** (tri numérique ou texte, asc/desc).
+- **Conservation en cache opt-in** (toggle persistant) du contenu saisi pour Text
+  Diff, Éditeur Markdown, Linter et CSV — via les hooks partagés
+  `usePersistentBoolean` / `useCachedState` (`src/hooks/`). Désactivé par défaut.
+- **Comparateur de texte** : option « trier les lignes » (compare deux listes sans
+  tenir compte de l'ordre).
+- **Linter** : langages ajoutés **C#**, **YAML**, **JSON** (validation via le
+  parseur JSON maison de l'outil JSON Linter).
+- **Accueil** : tri alphabétique par titre **localisé** (re-trié au changement de
+  langue), **recherche** (nom / description / tags), tags affichés en badges.
+- Nouveau **favicon** (glyphe `</>` sur fond accent) + icône maskable.
+
+### Étape 8 — Outil : Linter de code
+
+- Huitième et dernier outil de la v1 (`/code-linter`), chunk dédié.
+- Couche `lib/` pure et testée : runner générique (activation + sévérité par règle)
+  et **4 plugins langage** (JS/TS, CSS, HTML, Markdown) implémentant l'interface
+  `LanguageLinter`, avec le jeu de règles heuristiques v1 (regex/parsing léger).
+- `useCodeLinterStore` : config des règles mémorisée **par langage** ; issues
+  dérivées et groupées par sévérité.
+- Panneau de configuration (activer/désactiver, ajuster la sévérité info/warning/
+  error), résultats avec ligne/colonne. Documenté comme linter **pédagogique**,
+  pas un remplaçant d'ESLint/Stylelint.
+
+### Étape 7 — Outil : Éditeur Markdown
+
+- Septième outil (`/markdown-editor`), chunk dédié.
+- Premières (et seules) **dépendances runtime** ajoutées : `marked` (rendu) et
+  `dompurify` (sanitization anti-XSS), isolées dans une couche adaptateur
+  `lib/markdown.ts` (le reste de l'app ne dépend que de cette interface).
+- Édition + **aperçu live** en split view ; le HTML affiché est systématiquement
+  sanitizé avant injection. Export par copie (Markdown ou document HTML complet).
+- Grâce au code-splitting, ces deux libs ne sont téléchargées qu'en visitant l'outil.
+
+### Étape 6 — Outil : JSON Linter / Viewer
+
+- Sixième outil (`/json-linter`), chunk dédié.
+- Couche `lib/` pure et testée : **parseur JSON maison** (descente récursive) avec
+  erreurs localisées (ligne/colonne), construction d'un **arbre typé** (chemins
+  JSONPath), **JSONPath** simple (`$.a[0]['b']`), recherche texte/JSONPath,
+  reformatage et minification.
+- `useJsonLinterStore` : validation + arbre + recherche dérivés ; pliage, sélection,
+  navigation entre résultats, dépliage automatique des ancêtres de la sélection.
+- Arbre repliable avec types affichés, surlignage des correspondances, copie du
+  nœud sélectionné.
+
+### Étape 5 — Outil : Comparateur de texte
+
+- Cinquième outil (`/text-diff`), chunk dédié.
+- Couche `lib/diff/` pure et testée : cœur LCS générique + tokenizers caractère /
+  mot / ligne, produisant tous un `DiffOp[]` commun ; options « ignorer la casse »
+  et « ignorer les espaces » via une clé de comparaison (texte affiché préservé).
+- `useTextDiffStore` : deux textes (saisie ou import de fichier), granularité et
+  options modifiables à la volée, statistiques d'ajouts/suppressions.
+- `DiffView` unique pour les deux vues (unifiée et côte-à-côte), surlignage
+  ajout/suppression via `color-mix` sur les tokens de thème.
+
+### Étape 4 — Outil : Palette de couleurs RGAA
+
+- Quatrième outil (`/color-palette-rgaa`), chunk dédié.
+- Couche `lib/` pure et testée : luminance relative et rapport de contraste WCAG
+  (maison), seuils AA/AAA (texte normal / grand texte), suggestion de couleur de
+  texte accessible (recherche binaire vers noir/blanc), export CSS / JSON / Tailwind.
+- `useColorPaletteStore` : palette éditable comme source unique, vérificateur de
+  contraste sur deux couleurs sélectionnées, suggestions applicables en un clic.
+- Page : aperçu réel (fond/texte), ratio chiffré, badges de conformité (AAA / AA /
+  Échec) pour texte normal et grand texte, export copiable.
+- Nouveau composant tool-local `ColorField` (sélecteur natif + saisie hex synchronisés).
+
+### Étape 3 — Outil : Générateur de données factices
+
+- Troisième outil (`/fake-data-generator`), chunk dédié.
+- Couche `lib/` pure et testée : RNG déterministe (`mulberry32` + FNV-1a),
+  générateurs **Lorem Ipsum** (mots / phrases / paragraphes, en-tête classique
+  optionnel) et **UUID v4** (tirets / casse), registre de générateurs.
+- Architecture **Strategy + Registry à UI pilotée par les données** : chaque
+  générateur déclare ses champs (`FakerField` : nombre / booléen / liste) et la
+  page les rend génériquement — un nouveau générateur ne touche pas à l'UI.
+- Génération **déterministe par graine** ; sans graine, « Régénérer » fait varier
+  la sortie (rendu stable entre deux re-rendus).
+- Nouveau composant design system : `Checkbox` (+ story + test).
+
+### Étape 2 — Outil : Hash / Checksum
+
+- Deuxième outil (`/hash-checksum`), chunk dédié.
+- Couche `lib/` pure et testée : **MD5 maison** (RFC 1321, validé contre `node:crypto`
+  sur toutes les frontières de blocs), SHA-1/256/512 via `SubtleCrypto`, registre
+  d'algorithmes, normalisation + comparaison de hash.
+- `useHashChecksumStore` : source texte **ou** fichier (glisser-déposer / sélecteur),
+  hachage asynchrone lancé par les commands (compteur de requête anti-course),
+  comparateur dérivé qui met en évidence l'empreinte correspondant à un hash attendu.
+- Copie individuelle de chaque empreinte.
+
+### Étape 1 — Outil : Encodeur / Décodeur
+
+- Premier outil (`/encoder-decoder`), chargé en chunk dédié via le registre.
+- Couche `lib/` pure et testée : Base64 (maison, sûr en UTF-8), URL, entités HTML
+  (encode/decode), décodage de JWT (header/payload + expiration, sans vérification
+  de signature). Pattern Strategy + Registry (`Codec`, `FORMATS`).
+- `useEncoderStore` (Command/Query) : format, sens encode/décode, interversion,
+  réinitialisation ; sortie dérivée en direct, aucune persistance.
+- Vue JWT structurée (`JwtView`) : badge d'expiration, dates `iat`/`exp`/`nbf`
+  lisibles, signature rappelée comme non vérifiée.
+- Ajouts au design system : `Textarea`, `Select`, `CopyButton` (+ stories + tests).
+
+### Étape 0 — Socle applicatif
+
+- Projet initialisé à partir du socle [Node Template](https://github.com/kevingrillet/NodeTemplate)
+  (React 19 + TypeScript 6 + Vite 8, Tailwind v4, 4 thèmes runtime × clair/sombre,
+  i18n maison FR/EN, PWA offline, Vitest + Playwright + Storybook, ESLint/Prettier, CI/CD Pages).
+- Routeur maison à base de _hash_ (`#/outil`) : deep-link et rechargement sans 404
+  sur GitHub Pages, zéro dépendance runtime, _code-splitting_ par outil via `lazy()`.
+- Registre d'outils (`src/registry.ts`) : source unique alimentant la page d'accueil
+  et la navigation (vide en v0, un outil = une entrée).
+- Shell applicatif : `Layout` (en-tête + contrôles thème/langue + lien d'évitement),
+  `HomePage` générée depuis le registre, page `NotFound`.
+- Design system interne (`src/components/ui/`) documenté dans Storybook comme source
+  de vérité : `Button`, `Input`, `Panel`, `Badge`, `Accordion`.
+- Token de couleur `--color-success` ajouté (badges de conformité, états positifs).

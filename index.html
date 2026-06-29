@@ -1,0 +1,62 @@
+<!doctype html>
+<!-- data-theme par défaut ; l'identité réelle + le mode clair/sombre sont
+     appliqués par le script anti-flash ci-dessous, puis gérés par useTheme. -->
+<html lang="fr" data-theme="default">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DevTools Hub</title>
+    <meta
+      name="description"
+      content="Collection d'outils pour développeurs, 100% client-side : JSON, diff, encodeurs, hash, couleurs RGAA, Markdown et plus. Rien n'est envoyé à un serveur."
+    />
+    <meta name="theme-color" content="#f9fafb" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#030712" media="(prefers-color-scheme: dark)" />
+
+    <!-- PWA : installable + fonctionnement hors-ligne (voir public/manifest.webmanifest). -->
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+
+    <!-- Open Graph (aperçu lors d'un partage de lien). Renseignez og:url / og:image
+         avec des URL absolues si vous déployez le projet. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="DevTools Hub" />
+    <meta property="og:title" content="DevTools Hub" />
+    <meta
+      property="og:description"
+      content="Collection d'outils pour développeurs, 100% client-side : JSON, diff, encodeurs, hash, couleurs RGAA, Markdown et plus. Rien n'est envoyé à un serveur."
+    />
+
+    <script>
+      // Applique le thème AVANT le rendu pour éviter le « flash » (FOUC).
+      // Doit rester cohérent avec src/theme.ts + src/hooks/useTheme.ts
+      // (clés localStorage "theme-name" pour l'identité, "theme" pour le mode).
+      (function () {
+        try {
+          var root = document.documentElement;
+          var name = localStorage.getItem('theme-name');
+          if (
+            name === 'default' ||
+            name === 'atelier' ||
+            name === 'blueprint' ||
+            name === 'aurora'
+          ) {
+            root.dataset.theme = name;
+          }
+          var mode = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (mode === 'dark' || (mode === null && prefersDark)) {
+            root.classList.add('dark');
+          }
+        } catch (e) {
+          /* localStorage indisponible : on ignore. */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
