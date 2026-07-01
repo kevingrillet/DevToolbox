@@ -3,6 +3,64 @@
 Toutes les modifications notables de ce projet sont consignées ici.
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 
+## [0.2.0] — 2026-07-01
+
+### Ajouts
+
+- **Nouvel outil : Générateur de QR code** (`/qr-generator`) — 8 types de contenu
+  (texte, URL, WiFi, vCard, e-mail, SMS, téléphone, géo) via un **registre de
+  payloads** (pattern Registry/Factory, UI générée depuis les données) ; payloads
+  encodés selon leurs formats standard (WIFI:, vCard 3.0/RFC 6350, mailto, geo:…)
+  avec échappement des caractères réservés. Personnalisation (couleurs, forme des
+  modules, niveau de correction, densité, logo central), **avertissement de
+  contraste** pour la lisibilité, export **PNG / SVG** et copie presse-papier.
+  Chunk dédié, lazy-loadé.
+- **Linter de code** : bouton **« Reformater »** (best-effort, indentation seule —
+  jamais le contenu d'une ligne) pour les langages le supportant. Réindentation par
+  brackets (JS/TS, C#, CSS, JSON, conscients des chaînes/commentaires) ou par
+  profondeur de balises (HTML) ; nettoyage conservateur pour YAML/Markdown. Couche
+  pure `lib/format.ts` ; un plugin langage expose un `format?` optionnel.
+- **Éditeur Markdown** : démarre désormais avec un **contenu d'exemple** localisé
+  (FR/EN) illustrant les capacités du moteur ; « Réinitialiser » le recharge.
+- **Visualiseur CSV** : **export CSV** du tableau (échappement des cellules selon le
+  délimiteur).
+
+### Modifications
+
+- **Comparateur de texte** : « trier les lignes » devient une **commande** (tri en
+  place des deux textes source) plutôt qu'un interrupteur appliqué au diff ; la
+  granularité **par défaut passe de « mot » à « ligne »**. Découplage du rendu en
+  lignes (`components/rows.ts`) pour la vue côte-à-côte.
+- **Comparateur de texte** : **numéros de ligne sur les zones de saisie** Avant/Après
+  (gouttière synchronisée au défilement, `components/LineNumberedTextarea.tsx`) et
+  **en-tête « Avant / Après »** au-dessus des gouttières de la zone Différences (vues
+  unifiée et côte-à-côte).
+
+### Corrections
+
+- **Comparateur de texte (granularité ligne)** : la dernière ligne d'un texte (sans
+  saut de ligne final) n'était jamais appariée à une ligne identique terminée par
+  `\n`, créant des « lignes différentes » fantômes en fin de comparaison. La clé de
+  comparaison ignore désormais le `\r?\n` final (valeur réassemblée inchangée).
+
+### Dépendances
+
+- Ajout de la dépendance runtime **`qr-code-styling`** (génération/stylage/export du
+  QR), isolée dans l'adaptateur `qr-generator/lib/qr.ts`. Nouvelle exception assumée
+  au principe « tout from scratch » (au même titre que `marked`/`dompurify`),
+  cantonnée à un chunk dédié.
+
+### Outillage et documentation
+
+- **Hooks Git versionnés** (`.githooks/`, activés automatiquement par le script npm
+  `prepare` à chaque `npm install`) : `commit-msg` (sujet conforme Conventional
+  Commits), `pre-commit` (`npm run check`) et `pre-push` (`test:e2e` +
+  `build-storybook`, parité CI).
+- **Fins de ligne normalisées en LF** via `.gitattributes` (`eol=lf`).
+- **Documentation agents migrée vers `AGENTS.md`** (ex-`CLAUDE.md`) ; `CLAUDE.md` et
+  `.github/copilot-instructions.md` ne sont plus que des renvois vers `AGENTS.md`.
+  Ajout de références Claude Code et du garde-fou `--no-verify`.
+
 ## [0.1.0]
 
 ### Ajouts (finalisation v1)

@@ -1,7 +1,7 @@
 {
   "name": "devtools-hub",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "DevTools Hub — collection d'outils pour développeurs, 100% statique et client-side : React + TypeScript + Vite, thèmes runtime, i18n FR/EN, PWA, tests (Vitest + Playwright), Storybook.",
   "license": "GPL-3.0-or-later",
