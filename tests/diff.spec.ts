@@ -5,6 +5,8 @@ test('depuis l’accueil : diff par mot (ajout + suppression)', async ({ page })
   await page.getByRole('link', { name: /Comparateur de texte/i }).click();
   await expect(page).toHaveURL(/#\/text-diff$/);
 
+  // La granularité par défaut est « Ligne » : on bascule en « Mot » pour ce cas.
+  await page.getByLabel('Granularité').selectOption('word');
   await page.getByLabel('Avant').fill('one two three');
   await page.getByLabel('Après').fill('one four three');
 
@@ -25,6 +27,7 @@ test('ignorer la casse rend les textes identiques', async ({ page }) => {
 
 test('bascule en vue côte à côte', async ({ page }) => {
   await page.goto('/#/text-diff');
+  await page.getByLabel('Granularité').selectOption('word');
   await page.getByLabel('Avant').fill('alpha beta');
   await page.getByLabel('Après').fill('alpha gamma');
   await page.getByLabel('Affichage').selectOption('split');
@@ -33,12 +36,13 @@ test('bascule en vue côte à côte', async ({ page }) => {
   await expect(page.getByText('gamma', { exact: true })).toBeVisible();
 });
 
-test('le tri des lignes rend deux listes identiques', async ({ page }) => {
+test('le bouton « Trier les lignes » rend deux listes identiques', async ({ page }) => {
   await page.goto('/#/text-diff');
   await page.getByLabel('Avant').fill('b\na\nc');
   await page.getByLabel('Après').fill('a\nb\nc');
   await expect(page.getByText('Identique')).toHaveCount(0);
 
-  await page.getByLabel('Trier les lignes').check();
+  // « Trier les lignes » est désormais un bouton : il trie le texte source en place.
+  await page.getByRole('button', { name: /Trier les lignes/i }).click();
   await expect(page.getByText('Identique')).toBeVisible();
 });

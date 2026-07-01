@@ -2,6 +2,7 @@
  * Règles heuristiques pour YAML (parcours de lignes).
  */
 import { type LanguageLinter, type RawIssue, type Rule } from '../types';
+import { cleanupYaml } from '../format';
 
 const noTabs: Rule = {
   id: 'no-tabs',
@@ -63,4 +64,7 @@ export const yamlLinter: LanguageLinter = {
   id: 'yaml',
   labelKey: 'tools.codeLinter.languages.yaml',
   rules: [noTabs, missingSpaceAfterColon, duplicateKey],
+  // L'indentation YAML EST la structure : on ne réindente pas. Nettoyage sûr +
+  // conversion des tabulations d'indentation en espaces (interdites en YAML).
+  format: (source) => cleanupYaml(source),
 };

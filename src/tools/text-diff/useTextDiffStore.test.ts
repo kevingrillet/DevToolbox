@@ -37,25 +37,37 @@ describe('useTextDiffStore', () => {
     expect(result.current.right).toBe('A');
   });
 
-  it('applique les options (granularité, casse, tri) puis reset', async () => {
+  it('démarre en granularité « line » par défaut', () => {
+    const { result } = renderHook(() => useTextDiffStore());
+    expect(result.current.granularity).toBe('line');
+  });
+
+  it('applique les options (granularité, casse) puis reset', async () => {
     const { result } = renderHook(() => useTextDiffStore());
     act(() => {
-      result.current.setGranularity('line');
+      result.current.setGranularity('word');
       result.current.setIgnoreCase(true);
       result.current.setIgnoreWhitespace(true);
-      result.current.setSortLines(true);
       result.current.setView('split');
     });
-    expect(result.current.granularity).toBe('line');
+    expect(result.current.granularity).toBe('word');
     expect(result.current.view).toBe('split');
-    act(() => {
-      result.current.setLeft('b\na');
-      result.current.setRight('a\nb');
-    });
-    await waitFor(() => expect(result.current.identical).toBe(true)); // tri des lignes actif
     act(() => result.current.reset());
     expect(result.current.left).toBe('');
-    expect(result.current.granularity).toBe('word');
+    expect(result.current.granularity).toBe('line');
     expect(result.current.view).toBe('unified');
+  });
+
+  it('sortLines() trie en place les lignes des deux textes source', async () => {
+    const { result } = renderHook(() => useTextDiffStore());
+    act(() => {
+      result.current.setLeft('b\na\nc');
+      result.current.setRight('c\na\nb');
+    });
+    act(() => result.current.sortLines());
+    // C'est bien le texte source qui est trié (les value des textareas changent).
+    expect(result.current.left).toBe('a\nb\nc');
+    expect(result.current.right).toBe('a\nb\nc');
+    await waitFor(() => expect(result.current.identical).toBe(true));
   });
 });

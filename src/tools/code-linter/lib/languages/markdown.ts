@@ -2,6 +2,7 @@
  * Règles heuristiques pour Markdown (parcours de lignes + regex).
  */
 import { posToLineCol, type LanguageLinter, type RawIssue, type Rule } from '../types';
+import { cleanupMarkdown } from '../format';
 
 const emptyLink: Rule = {
   id: 'empty-link',
@@ -73,4 +74,7 @@ export const markdownLinter: LanguageLinter = {
   id: 'markdown',
   labelKey: 'tools.codeLinter.languages.markdown',
   rules: [emptyLink, headingSkip, codeFenceNoLang],
+  // En Markdown l'indentation est porteuse de sens : on se limite à un nettoyage
+  // sûr (fins de ligne, lignes vides multiples) qui préserve les sauts durs.
+  format: (source) => cleanupMarkdown(source),
 };

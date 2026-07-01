@@ -1,6 +1,21 @@
 import { describe, it, expect } from 'vitest';
-import { parseCsv, detectDelimiter, toTable } from './csv';
+import { parseCsv, detectDelimiter, toTable, toCsv } from './csv';
 import { sortRows } from './sort';
+
+describe('toCsv', () => {
+  it('sérialise en-tête + lignes avec le délimiteur', () => {
+    expect(toCsv(['a', 'b'], [['1', '2']], ',', true)).toBe('a,b\n1,2');
+  });
+  it('omet l’en-tête quand includeHeader est faux', () => {
+    expect(toCsv(['#1', '#2'], [['1', '2']], ',', false)).toBe('1,2');
+  });
+  it('échappe les cellules contenant le délimiteur, un guillemet ou un saut de ligne', () => {
+    expect(toCsv(['x'], [['a,b'], ['c"d'], ['e\nf']], ',', true)).toBe('x\n"a,b"\n"c""d"\n"e\nf"');
+  });
+  it('échappe selon le délimiteur courant (tabulation)', () => {
+    expect(toCsv(['x', 'y'], [['a\tb', 'c']], '\t', true)).toBe('x\ty\n"a\tb"\tc');
+  });
+});
 
 describe('parseCsv', () => {
   it('parse des lignes simples', () => {

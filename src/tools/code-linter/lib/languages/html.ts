@@ -2,6 +2,7 @@
  * Règles heuristiques pour HTML (regex + appariement de balises par pile).
  */
 import { posToLineCol, type LanguageLinter, type RawIssue, type Rule } from '../types';
+import { reindentHtml } from '../format';
 
 const imgAlt: Rule = {
   id: 'img-alt',
@@ -111,4 +112,5 @@ export const htmlLinter: LanguageLinter = {
   id: 'html',
   labelKey: 'tools.codeLinter.languages.html',
   rules: [imgAlt, unclosedTag, duplicateId, aNoHref],
+  format: (source) => reindentHtml(source),
 };

@@ -9,6 +9,7 @@
     "node": ">=24"
   },
   "scripts": {
+    "prepare": "git config core.hooksPath .githooks",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
@@ -32,6 +33,7 @@
   "dependencies": {
     "dompurify": "^3.4.11",
     "marked": "^18.0.5",
+    "qr-code-styling": "^1.9.2",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },

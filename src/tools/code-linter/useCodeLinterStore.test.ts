@@ -13,6 +13,14 @@ describe('useCodeLinterStore', () => {
     expect(total).toBe(result.current.issues.length);
   });
 
+  it('reformate la source via le langage courant (JS par défaut)', () => {
+    const { result } = renderHook(() => useCodeLinterStore());
+    expect(result.current.canFormat).toBe(true);
+    act(() => result.current.setSource('function f() {\nreturn 1;\n}'));
+    act(() => result.current.format());
+    expect(result.current.source).toBe('function f() {\n  return 1;\n}');
+  });
+
   it('conserve une config par langage', () => {
     const { result } = renderHook(() => useCodeLinterStore());
     const first = result.current.languageId;

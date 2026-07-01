@@ -3,6 +3,7 @@
  * pas d'analyse de portée complète.
  */
 import { posToLineCol, scan, type LanguageLinter, type RawIssue, type Rule } from '../types';
+import { reindentBrackets } from '../format';
 
 const noVar: Rule = {
   id: 'no-var',
@@ -80,4 +81,10 @@ export const javascriptLinter: LanguageLinter = {
   id: 'javascript',
   labelKey: 'tools.codeLinter.languages.javascript',
   rules: [noVar, noConsole, eqeqeq, noUnusedVars, semi, noDebugger],
+  format: (source) =>
+    reindentBrackets(source, {
+      lineComment: '//',
+      blockComment: ['/*', '*/'],
+      template: true,
+    }),
 };

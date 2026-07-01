@@ -6,7 +6,7 @@
  * délimiteur restent en mémoire de session uniquement.
  */
 import { useMemo, useState } from 'react';
-import { detectDelimiter, toTable, type CsvTable } from './lib/csv';
+import { detectDelimiter, toTable, toCsv, type CsvTable } from './lib/csv';
 import { sortRows, type SortDir } from './lib/sort';
 import { usePersistentBoolean, useCachedState } from '../../hooks/useCachedState';
 import { useDebouncedValue } from '../../hooks/useDebouncedValue';
@@ -29,6 +29,8 @@ export interface CsvStore {
   cacheEnabled: boolean;
   table: CsvTable;
   sortedRows: string[][];
+  /** CSV sérialisé de la grille telle qu'affichée (triée), prêt à exporter. */
+  csvOutput: string;
   setInput: (text: string) => void;
   setInputFile: (file: File) => void;
   setDelimiterChoice: (choice: DelimiterChoice) => void;
@@ -61,6 +63,13 @@ export function useCsvStore(): CsvStore {
     [table, sortColumn, sortDir],
   );
 
+  // Export = la grille telle qu'affichée (lignes triées), avec le délimiteur
+  // courant. On n'écrit l'en-tête que s'il est réel (hasHeader).
+  const csvOutput = useMemo(
+    () => toCsv(table.headers, sortedRows, delimiter, hasHeader),
+    [table.headers, sortedRows, delimiter, hasHeader],
+  );
+
   function setInputFile(file: File) {
     readTextFile(file, setInput);
   }
@@ -89,6 +98,7 @@ export function useCsvStore(): CsvStore {
     cacheEnabled,
     table,
     sortedRows,
+    csvOutput,
     setInput,
     setInputFile,
     setDelimiterChoice,

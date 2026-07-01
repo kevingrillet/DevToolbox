@@ -4,8 +4,7 @@ Collection d'**outils pour développeurs**, regroupés dans un même site **stat
 hébergeable gratuitement sur **GitHub Pages**. Chaque outil tourne **100% dans le
 navigateur** : aucune donnée n'est envoyée à un serveur.
 
-Construit sur le socle [Node Template](https://github.com/kevingrillet/NodeTemplate)
-(lui-même extrait de [QrCodeGenerator](https://github.com/kevingrillet/QrCodeGenerator)) :
+Construit sur le socle [Node Template](https://github.com/kevingrillet/NodeTemplate) :
 mêmes stack, thèmes, i18n et outillage.
 
 ---
@@ -28,9 +27,10 @@ mêmes stack, thèmes, i18n et outillage.
 | CI/CD                        | GitHub Actions                                                                        |
 
 Les dépendances _runtime_ sont volontairement minimales (`react`, `react-dom`, plus
-quelques libs ciblées et justifiées au cas par cas — ex. `marked`/`dompurify` pour
-l'éditeur Markdown). Toute logique métier (parsing, diff, hash, lint…) est codée
-« from scratch », pure et testée.
+quelques libs ciblées et justifiées au cas par cas — `marked`/`dompurify` pour
+l'éditeur Markdown, `qr-code-styling` pour le générateur de QR). Chacune est isolée
+dans une couche adaptateur et cantonnée au chunk de son outil. Toute autre logique
+métier (parsing, diff, hash, lint…) est codée « from scratch », pure et testée.
 
 ---
 
@@ -118,17 +118,18 @@ format / générateur est un plugin respectant une interface commune.
 
 Tous client-side, accessibles depuis l'accueil et en deep-link (`#/<route>`) :
 
-| Outil                | Route                   | Résumé                                                                                            |
-| -------------------- | ----------------------- | ------------------------------------------------------------------------------------------------- |
-| Encodeur / Décodeur  | `#/encoder-decoder`     | Base64, URL, entités HTML, décodage JWT (sans vérif. de signature).                               |
-| Hash / Checksum      | `#/hash-checksum`       | MD5 (maison) + SHA-1/256/512 (SubtleCrypto), texte/fichier, comparateur.                          |
-| Données factices     | `#/fake-data-generator` | Lorem Ipsum + UUID v4, déterministe par graine (registre de plugins).                             |
-| Palette RGAA         | `#/color-palette-rgaa`  | Contraste WCAG, conformité AA/AAA, suggestions, export CSS/JSON/Tailwind.                         |
-| Comparateur de texte | `#/text-diff`           | Diff caractère/mot/ligne, options casse/espaces, unifié ou côte-à-côte.                           |
-| JSON Linter / Viewer | `#/json-linter`         | Validation localisée, arbre repliable, recherche texte/JSONPath, format/minify.                   |
-| Éditeur Markdown     | `#/markdown-editor`     | Aperçu live, HTML sanitizé (anti-XSS), export par copie.                                          |
-| Linter de code       | `#/code-linter`         | JS/TS, C#, CSS, HTML, JSON, YAML, Markdown — règles heuristiques **pédagogiques**, paramétrables. |
-| Visualiseur CSV      | `#/csv-viewer`          | Parser maison (guillemets/échappements), table **triable** par colonne.                           |
+| Outil                | Route                   | Résumé                                                                                                          |
+| -------------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Encodeur / Décodeur  | `#/encoder-decoder`     | Base64, URL, entités HTML, décodage JWT (sans vérif. de signature).                                             |
+| Hash / Checksum      | `#/hash-checksum`       | MD5 (maison) + SHA-1/256/512 (SubtleCrypto), texte/fichier, comparateur.                                        |
+| Données factices     | `#/fake-data-generator` | Lorem Ipsum + UUID v4, déterministe par graine (registre de plugins).                                           |
+| Palette RGAA         | `#/color-palette-rgaa`  | Contraste WCAG, conformité AA/AAA, suggestions, export CSS/JSON/Tailwind.                                       |
+| Comparateur de texte | `#/text-diff`           | Diff caractère/mot/ligne, options casse/espaces, unifié ou côte-à-côte.                                         |
+| JSON Linter / Viewer | `#/json-linter`         | Validation localisée, arbre repliable, recherche texte/JSONPath, format/minify.                                 |
+| Éditeur Markdown     | `#/markdown-editor`     | Aperçu live, HTML sanitizé (anti-XSS), export par copie, contenu d'exemple localisé.                            |
+| Linter de code       | `#/code-linter`         | JS/TS, C#, CSS, HTML, JSON, YAML, Markdown — règles heuristiques **pédagogiques**, **reformatage** best-effort. |
+| Visualiseur CSV      | `#/csv-viewer`          | Parser maison (guillemets/échappements), table **triable** par colonne, export CSV.                             |
+| Générateur de QR     | `#/qr-generator`        | Texte/URL/WiFi/vCard/géo…, personnalisation (couleurs, forme, logo), export PNG/SVG.                            |
 
 > Le linter de code est volontairement **léger et pédagogique** (heuristiques
 > regex/parsing simple) : ce n'est pas un remplaçant d'ESLint/Stylelint.

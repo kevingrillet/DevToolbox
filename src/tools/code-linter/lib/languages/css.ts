@@ -2,6 +2,7 @@
  * Règles heuristiques pour CSS (regex + découpage en blocs simples).
  */
 import { posToLineCol, scan, type LanguageLinter, type RawIssue, type Rule } from '../types';
+import { reindentBrackets } from '../format';
 
 const noImportant: Rule = {
   id: 'no-important',
@@ -120,4 +121,6 @@ export const cssLinter: LanguageLinter = {
   id: 'css',
   labelKey: 'tools.codeLinter.languages.css',
   rules: [noImportant, duplicateProperty, missingUnit, duplicateColor],
+  // CSS n'a que des commentaires de bloc `/* */` (pas de `//` ni de gabarits).
+  format: (source) => reindentBrackets(source, { blockComment: ['/*', '*/'] }),
 };

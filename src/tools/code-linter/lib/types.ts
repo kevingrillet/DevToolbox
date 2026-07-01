@@ -35,6 +35,12 @@ export interface LanguageLinter {
   id: string;
   labelKey: string;
   rules: Rule[];
+  /**
+   * Reformateur optionnel (best-effort). Renvoie la source reformatée, ou la
+   * source inchangée s'il ne peut rien faire de sûr. Absent = pas de bouton
+   * « Reformater » pour ce langage.
+   */
+  format?: (source: string) => string;
 }
 
 export interface RuleSetting {

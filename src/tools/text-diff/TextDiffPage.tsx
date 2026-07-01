@@ -4,7 +4,6 @@
  * `DiffView` qui consomme le `DiffOp[]` du store.
  */
 import { useI18n } from '../../i18n/I18nProvider';
-import { Textarea } from '../../components/ui/Textarea';
 import { Select } from '../../components/ui/Select';
 import { Checkbox } from '../../components/ui/Checkbox';
 import { Button } from '../../components/ui/Button';
@@ -12,6 +11,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Callout } from '../../components/ui/Callout';
 import { useTextDiffStore } from './useTextDiffStore';
 import { DiffView } from './components/DiffView';
+import { LineNumberedTextarea } from './components/LineNumberedTextarea';
 
 export default function TextDiffPage() {
   const { t } = useI18n();
@@ -24,38 +24,7 @@ export default function TextDiffPage() {
       </h1>
       <p className="mt-2 max-w-2xl text-sm text-fg-muted">{t('tools.diff.description')}</p>
 
-      <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <div className="flex flex-col gap-2">
-          <Textarea
-            label={t('tools.diff.before')}
-            placeholder={t('tools.diff.beforePlaceholder')}
-            value={store.left}
-            onChange={(event) => store.setLeft(event.target.value)}
-            rows={8}
-          />
-          <FileImport
-            label={t('tools.diff.importFile')}
-            id="diff-left-file"
-            onFile={store.setLeftFile}
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Textarea
-            label={t('tools.diff.after')}
-            placeholder={t('tools.diff.afterPlaceholder')}
-            value={store.right}
-            onChange={(event) => store.setRight(event.target.value)}
-            rows={8}
-          />
-          <FileImport
-            label={t('tools.diff.importFile')}
-            id="diff-right-file"
-            onFile={store.setRightFile}
-          />
-        </div>
-      </div>
-
-      <div className="mt-4 flex flex-wrap items-end gap-3">
+      <div className="mt-6 flex flex-wrap items-end gap-3">
         <Select
           label={t('tools.diff.granularity')}
           value={store.granularity}
@@ -86,23 +55,54 @@ export default function TextDiffPage() {
             checked={store.ignoreWhitespace}
             onChange={store.setIgnoreWhitespace}
           />
-          <Checkbox
-            label={t('tools.diff.sortLines')}
-            checked={store.sortLines}
-            onChange={store.setSortLines}
-          />
+        </div>
+        <div className="flex flex-col gap-1 pb-1">
           <Checkbox
             label={t('common.cache')}
             checked={store.cacheEnabled}
             onChange={store.setCacheEnabled}
           />
         </div>
+        <Button variant="secondary" onClick={store.sortLines}>
+          ↕ {t('tools.diff.sortLines')}
+        </Button>
         <Button variant="secondary" onClick={store.swap}>
           ⇄ {t('tools.diff.swap')}
         </Button>
         <Button variant="ghost" onClick={store.reset}>
           {t('tools.diff.reset')}
         </Button>
+      </div>
+
+      <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="flex flex-col gap-2">
+          <LineNumberedTextarea
+            label={t('tools.diff.before')}
+            placeholder={t('tools.diff.beforePlaceholder')}
+            value={store.left}
+            onChange={store.setLeft}
+            rows={8}
+          />
+          <FileImport
+            label={t('tools.diff.importFile')}
+            id="diff-left-file"
+            onFile={store.setLeftFile}
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <LineNumberedTextarea
+            label={t('tools.diff.after')}
+            placeholder={t('tools.diff.afterPlaceholder')}
+            value={store.right}
+            onChange={store.setRight}
+            rows={8}
+          />
+          <FileImport
+            label={t('tools.diff.importFile')}
+            id="diff-right-file"
+            onFile={store.setRightFile}
+          />
+        </div>
       </div>
 
       <div className="mt-6 flex items-center gap-3">
@@ -121,7 +121,12 @@ export default function TextDiffPage() {
         {store.tooLarge ? (
           <Callout block>{t('tools.diff.tooLargeHint')}</Callout>
         ) : (
-          <DiffView ops={store.ops} view={store.view} />
+          <DiffView
+            ops={store.ops}
+            view={store.view}
+            beforeLabel={t('tools.diff.before')}
+            afterLabel={t('tools.diff.after')}
+          />
         )}
       </div>
     </section>

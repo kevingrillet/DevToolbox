@@ -17,7 +17,15 @@ export function wordDiff(a: string, b: string, options: DiffOptions): DiffOp[] {
 }
 
 export function lineDiff(a: string, b: string, options: DiffOptions): DiffOp[] {
-  return diffTokens(lineTokens(a), lineTokens(b), makeKey(options));
+  // La granularité ligne attache le `\n` à son token (pour un réassemblage exact).
+  // Mais l'IDENTITÉ d'une ligne ne doit pas dépendre de ce saut final : sinon la
+  // dernière ligne (sans `\n`) ne matche jamais une ligne identique suivie d'un
+  // `\n`, ce qui crée des « lignes différentes » fantômes en fin de texte. On
+  // neutralise donc le `\r?\n` final dans la clé de comparaison seulement (la
+  // `value` du token reste intacte).
+  const base = makeKey(options);
+  const key = (token: string): string => base(token.replace(/\r?\n$/, ''));
+  return diffTokens(lineTokens(a), lineTokens(b), key);
 }
 
 export function computeDiff(

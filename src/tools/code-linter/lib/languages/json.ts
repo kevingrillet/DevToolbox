@@ -3,6 +3,7 @@
  * JSON Linter (erreur unique localisée). Évite de redévelopper un parseur.
  */
 import { parseJson } from '../../../json-linter/lib/parse';
+import { formatJson } from '../../../json-linter/lib/format';
 import { type LanguageLinter, type Rule } from '../types';
 
 const jsonSyntax: Rule = {
@@ -28,4 +29,11 @@ export const jsonLinter: LanguageLinter = {
   id: 'json',
   labelKey: 'tools.codeLinter.languages.json',
   rules: [jsonSyntax],
+  // Reformatage fiable : on parse puis on ré-indente (2 espaces). JSON invalide
+  // → source inchangée (rien de sûr à faire).
+  format: (source) => {
+    if (source.trim() === '') return source;
+    const result = parseJson(source);
+    return result.ok ? formatJson(result.value) : source;
+  },
 };

@@ -6,7 +6,7 @@
  * conservé en cache (toggle persistant) ; sinon l'éditeur démarre vide.
  */
 import { useCallback, useMemo } from 'react';
-import { renderMarkdown, buildHtmlDocument } from './lib/markdown';
+import { renderMarkdown, buildHtmlDocument, exampleMarkdown } from './lib/markdown';
 import { usePersistentBoolean, useCachedState } from '../../hooks/useCachedState';
 import { useDebouncedValue } from '../../hooks/useDebouncedValue';
 import { readTextFile } from '../../lib/readTextFile';
@@ -24,7 +24,14 @@ export interface MarkdownStore {
 
 export function useMarkdownStore(lang = 'en'): MarkdownStore {
   const [cacheEnabled, setCacheEnabled] = usePersistentBoolean('devtools:markdown:cache');
-  const [input, setInput] = useCachedState('devtools:markdown:input', cacheEnabled);
+  // L'éditeur démarre sur un Markdown d'exemple (façon dillinger.io) plutôt que
+  // vide, pour montrer d'emblée les capacités du moteur. Si le cache est activé,
+  // le contenu mémorisé prend le pas sur l'exemple.
+  const [input, setInput] = useCachedState(
+    'devtools:markdown:input',
+    cacheEnabled,
+    exampleMarkdown(lang),
+  );
 
   // Le rendu (marked + sanitization) ne suit que la saisie stabilisée.
   const debouncedInput = useDebouncedValue(input);
@@ -39,7 +46,8 @@ export function useMarkdownStore(lang = 'en'): MarkdownStore {
     [setInput],
   );
 
-  const reset = useCallback(() => setInput(''), [setInput]);
+  // Réinitialiser restaure l'exemple (l'état « par défaut »), pas un éditeur vide.
+  const reset = useCallback(() => setInput(exampleMarkdown(lang)), [setInput, lang]);
 
   return {
     input,

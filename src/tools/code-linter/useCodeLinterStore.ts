@@ -35,6 +35,8 @@ export interface CodeLinterStore {
   issues: LintIssue[];
   counts: Record<Severity, number>;
   cacheEnabled: boolean;
+  /** Le langage courant propose-t-il un reformatage ? */
+  canFormat: boolean;
   setLanguage: (id: string) => void;
   setCacheEnabled: (value: boolean) => void;
   setSource: (text: string) => void;
@@ -42,6 +44,8 @@ export interface CodeLinterStore {
   toggleRule: (ruleId: string) => void;
   setRuleSeverity: (ruleId: string, severity: Severity) => void;
   resetConfig: () => void;
+  /** Reformate la source via le reformateur du langage courant (no-op sinon). */
+  format: () => void;
   reset: () => void;
 }
 
@@ -105,6 +109,11 @@ export function useCodeLinterStore(): CodeLinterStore {
     [languageId, language],
   );
 
+  const canFormat = typeof language.format === 'function';
+  const format = useCallback(() => {
+    if (language.format) setSource(language.format(source));
+  }, [language, source, setSource]);
+
   const reset = useCallback(() => setSource(''), [setSource]);
 
   return {
@@ -115,6 +124,7 @@ export function useCodeLinterStore(): CodeLinterStore {
     issues,
     counts,
     cacheEnabled,
+    canFormat,
     setLanguage,
     setCacheEnabled,
     setSource,
@@ -122,6 +132,7 @@ export function useCodeLinterStore(): CodeLinterStore {
     toggleRule,
     setRuleSeverity,
     resetConfig,
+    format,
     reset,
   };
 }

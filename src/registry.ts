@@ -3,8 +3,7 @@
  *
  * La page d'accueil et la navigation en sont dérivées automatiquement : ajouter
  * un outil = ajouter une entrée ici (avec son import paresseux), sans toucher au
- * shell ni au routeur. C'est l'équivalent du registre des types de payload du
- * projet QrCodeGenerator.
+ * shell ni au routeur.
  *
  * En v0 (socle), le registre est volontairement VIDE : chaque étape « un outil »
  * y poussera son entrée.
@@ -80,6 +79,15 @@ export const TOOLS: ToolMeta[] = [
     descriptionKey: 'tools.diff.description',
     tags: ['diff', 'compare', 'text', 'merge'],
     load: () => import('./tools/text-diff'),
+  },
+  {
+    id: 'qr-generator',
+    path: '/qr-generator',
+    icon: '🔳',
+    titleKey: 'tools.qr.title',
+    descriptionKey: 'tools.qr.description',
+    tags: ['qr', 'wifi', 'vcard', 'url', 'barcode', 'generate'],
+    load: () => import('./tools/qr-generator'),
   },
   {
     id: 'json-linter',

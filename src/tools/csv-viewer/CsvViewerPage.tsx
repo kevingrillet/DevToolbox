@@ -11,6 +11,18 @@ import { Button } from '../../components/ui/Button';
 import { useCsvStore } from './useCsvStore';
 import type { DelimiterChoice } from './useCsvStore';
 
+function download(filename: string, content: string, mime: string) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
 export default function CsvViewerPage() {
   const { t } = useI18n();
   const store = useCsvStore();
@@ -23,17 +35,10 @@ export default function CsvViewerPage() {
       </h1>
       <p className="mt-2 max-w-2xl text-sm text-fg-muted">{t('tools.csv.description')}</p>
 
-      <div className="mt-4">
-        <Textarea
-          label={t('tools.csv.input')}
-          placeholder={t('tools.csv.inputPlaceholder')}
-          value={store.input}
-          onChange={(event) => store.setInput(event.target.value)}
-          rows={6}
-        />
-      </div>
-
-      <div className="mt-3 flex flex-wrap items-end gap-3">
+      {/* Ligne de paramétrage AVANT le CSV. Les cases à cocher sont enveloppées
+          dans une boîte `h-10` centrée pour s'aligner verticalement avec les
+          boutons/menus de la même ligne. */}
+      <div className="mt-4 flex flex-wrap items-end gap-3">
         <Select
           label={t('tools.csv.delimiter')}
           value={store.delimiterChoice}
@@ -45,16 +50,20 @@ export default function CsvViewerPage() {
             { value: 'tab', label: t('tools.csv.delimiters.tab') },
           ]}
         />
-        <Checkbox
-          label={t('tools.csv.hasHeader')}
-          checked={store.hasHeader}
-          onChange={store.setHasHeader}
-        />
-        <Checkbox
-          label={t('common.cache')}
-          checked={store.cacheEnabled}
-          onChange={store.setCacheEnabled}
-        />
+        <div className="flex h-10 items-center">
+          <Checkbox
+            label={t('tools.csv.hasHeader')}
+            checked={store.hasHeader}
+            onChange={store.setHasHeader}
+          />
+        </div>
+        <div className="flex h-10 items-center">
+          <Checkbox
+            label={t('common.cache')}
+            checked={store.cacheEnabled}
+            onChange={store.setCacheEnabled}
+          />
+        </div>
         <input
           id="csv-file"
           type="file"
@@ -66,13 +75,30 @@ export default function CsvViewerPage() {
         />
         <label
           htmlFor="csv-file"
-          className="inline-flex cursor-pointer items-center rounded-control border bg-surface px-3 py-1.5 text-sm font-medium text-fg transition hover:bg-subtle"
+          className="inline-flex h-10 cursor-pointer items-center rounded-control border bg-surface px-3 text-sm font-medium text-fg transition hover:bg-subtle"
         >
           {t('tools.csv.importFile')}
         </label>
+        <Button
+          variant="secondary"
+          disabled={!hasRows}
+          onClick={() => download('export.csv', store.csvOutput, 'text/csv;charset=utf-8')}
+        >
+          {t('tools.csv.export')}
+        </Button>
         <Button variant="ghost" onClick={store.reset}>
           {t('tools.csv.reset')}
         </Button>
+      </div>
+
+      <div className="mt-4">
+        <Textarea
+          label={t('tools.csv.input')}
+          placeholder={t('tools.csv.inputPlaceholder')}
+          value={store.input}
+          onChange={(event) => store.setInput(event.target.value)}
+          rows={6}
+        />
       </div>
 
       <div className="mt-6 overflow-x-auto rounded-card border bg-surface">

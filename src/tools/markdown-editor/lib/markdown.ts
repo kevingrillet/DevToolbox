@@ -34,6 +34,81 @@ export function renderMarkdown(md: string): string {
   return DOMPurify.sanitize(rawHtml, { USE_PROFILES: { html: true }, ADD_ATTR: ['target'] });
 }
 
+const EXAMPLE_FR = `# Bienvenue 👋
+
+Cet **exemple** montre ce que le moteur sait faire. _Modifiez-le_ ou videz tout
+pour partir de zéro.
+
+## Mise en forme
+
+- **Gras**, _italique_, \`code en ligne\` et ~~barré~~
+- [Un lien](https://example.com)
+- Listes imbriquées :
+  1. Premier
+  2. Second
+
+> Une citation, pour mettre en avant un passage.
+
+## Bloc de code
+
+\`\`\`ts
+function salut(nom: string): string {
+  return \`Bonjour, \${nom} !\`;
+}
+\`\`\`
+
+## Tableau
+
+| Outil    | Rôle              |
+| -------- | ----------------- |
+| Markdown | Rédaction         |
+| Aperçu   | Rendu en direct   |
+
+---
+
+Le HTML généré est **nettoyé** (anti-XSS) avant affichage.
+`;
+
+const EXAMPLE_EN = `# Welcome 👋
+
+This **example** shows what the engine can do. _Edit it_ or clear everything to
+start fresh.
+
+## Formatting
+
+- **Bold**, _italic_, \`inline code\` and ~~strikethrough~~
+- [A link](https://example.com)
+- Nested lists:
+  1. First
+  2. Second
+
+> A blockquote, to highlight a passage.
+
+## Code block
+
+\`\`\`ts
+function hello(name: string): string {
+  return \`Hello, \${name}!\`;
+}
+\`\`\`
+
+## Table
+
+| Tool     | Role           |
+| -------- | -------------- |
+| Markdown | Authoring      |
+| Preview  | Live rendering |
+
+---
+
+The generated HTML is **sanitized** (anti-XSS) before display.
+`;
+
+/** Markdown d'exemple par défaut (façon dillinger.io), localisé fr/en. */
+export function exampleMarkdown(lang = 'en'): string {
+  return lang === 'fr' ? EXAMPLE_FR : EXAMPLE_EN;
+}
+
 /** Échappe les caractères sensibles d'une valeur insérée dans du HTML. */
 function escapeHtml(value: string): string {
   return value

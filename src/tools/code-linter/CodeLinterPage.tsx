@@ -91,6 +91,11 @@ export default function CodeLinterPage() {
         >
           {t('tools.codeLinter.importFile')}
         </label>
+        {store.canFormat && (
+          <Button variant="secondary" disabled={store.source === ''} onClick={store.format}>
+            {t('tools.codeLinter.reformat')}
+          </Button>
+        )}
         <Button variant="ghost" onClick={store.reset}>
           {t('tools.codeLinter.reset')}
         </Button>

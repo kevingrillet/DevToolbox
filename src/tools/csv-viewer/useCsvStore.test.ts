@@ -34,6 +34,24 @@ describe('useCsvStore', () => {
     expect(result.current.hasHeader).toBe(false);
   });
 
+  it('csvOutput reflète la grille triée (en-tête réel inclus)', async () => {
+    const { result } = renderHook(() => useCsvStore());
+    act(() => result.current.setInput(CSV));
+    await waitFor(() => expect(result.current.table.rows.length).toBe(2));
+    // Tri décroissant sur l'âge (colonne 1) : Alice (30) avant Bob (25).
+    act(() => result.current.toggleSort(1));
+    act(() => result.current.toggleSort(1));
+    expect(result.current.csvOutput).toBe('name,age\nAlice,30\nBob,25');
+  });
+
+  it('csvOutput sans en-tête synthétique quand hasHeader est faux', async () => {
+    const { result } = renderHook(() => useCsvStore());
+    act(() => result.current.setHasHeader(false));
+    act(() => result.current.setInput('a,b\nc,d'));
+    await waitFor(() => expect(result.current.table.rows.length).toBe(2));
+    expect(result.current.csvOutput).toBe('a,b\nc,d');
+  });
+
   it('reset vide l’entrée et le tri', async () => {
     const { result } = renderHook(() => useCsvStore());
     act(() => result.current.setInput(CSV));

@@ -129,3 +129,34 @@ export function toTable(text: string, delimiter: string, hasHeader: boolean): Cs
   const headers = Array.from({ length: columnCount }, (_, i) => `#${i + 1}`);
   return { headers, rows: normalized, columnCount };
 }
+
+/** Échappe une cellule (guillemets RFC 4180) si elle contient un caractère sensible. */
+function escapeCell(cell: string, delimiter: string): string {
+  if (
+    cell.includes(delimiter) ||
+    cell.includes('"') ||
+    cell.includes('\n') ||
+    cell.includes('\r')
+  ) {
+    return `"${cell.replace(/"/g, '""')}"`;
+  }
+  return cell;
+}
+
+/**
+ * Sérialise une table (telle qu'affichée, donc déjà triée) en CSV avec le
+ * délimiteur courant. `includeHeader` ajoute la ligne d'en-tête en tête : on ne
+ * l'active que pour de vrais en-têtes (sinon les en-têtes synthétiques `#1`/`#2`
+ * pollueraient l'export).
+ */
+export function toCsv(
+  headers: string[],
+  rows: string[][],
+  delimiter: string,
+  includeHeader: boolean,
+): string {
+  const lines: string[] = [];
+  if (includeHeader) lines.push(headers.map((c) => escapeCell(c, delimiter)).join(delimiter));
+  for (const row of rows) lines.push(row.map((c) => escapeCell(c, delimiter)).join(delimiter));
+  return lines.join('\n');
+}
