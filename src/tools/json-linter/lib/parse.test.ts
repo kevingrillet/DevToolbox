@@ -88,3 +88,28 @@ describe('parseJson — erreurs localisées', () => {
     expect(parseJson('1 2').ok).toBe(false);
   });
 });
+
+describe('parseJson — limite de profondeur', () => {
+  it('analyse un document profondément imbriqué mais sous la limite (1000)', () => {
+    const depth = 1000;
+    const text = '['.repeat(depth) + ']'.repeat(depth);
+    const r = parseJson(text);
+    expect(r.ok).toBe(true);
+  });
+
+  it('lève une erreur explicite au-delà de la limite (tableaux) au lieu de déborder la pile', () => {
+    const depth = 1001;
+    const text = '['.repeat(depth) + ']'.repeat(depth);
+    const r = parseJson(text);
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.error.message).toMatch(/Imbrication trop profonde/);
+  });
+
+  it('lève une erreur explicite au-delà de la limite (objets)', () => {
+    const depth = 1001;
+    const text = '{"a":'.repeat(depth) + '1' + '}'.repeat(depth);
+    const r = parseJson(text);
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.error.message).toMatch(/Imbrication trop profonde/);
+  });
+});

@@ -56,6 +56,16 @@ function lineColAt(text: string, index: number): { line: number; column: number 
   return { line, column };
 }
 
+/**
+ * Profondeur d'imbrication maximale (objets/tableaux). Le parseur est en descente
+ * récursive : un document pathologique très profond (`[[[[…]]]]`) ferait déborder
+ * la pile d'appels (RangeError « Maximum call stack size exceeded ») avant même
+ * la fin de l'analyse. On plafonne donc explicitement pour lever une erreur
+ * localisée et lisible plutôt qu'un plantage opaque. 1000 dépasse tout JSON
+ * réaliste tout en restant loin de la limite de pile des moteurs JS.
+ */
+const MAX_DEPTH = 1000;
+
 const NUMBER = /-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/y;
 
 /**
@@ -72,6 +82,7 @@ function losesPrecision(literal: string, value: number): boolean {
 
 class Parser {
   private i = 0;
+  private depth = 0;
   readonly warnings: ParseWarning[] = [];
 
   constructor(private readonly text: string) {}
@@ -86,6 +97,14 @@ class Parser {
 
   private fail(message: string): never {
     throw new JsonParseError(message, this.i);
+  }
+
+  /** Garde-fou de profondeur : lève une erreur localisée au lieu d'un débordement
+   *  de pile sur un document pathologiquement imbriqué. */
+  private enter(): void {
+    if (++this.depth > MAX_DEPTH) {
+      this.fail(`Imbrication trop profonde (maximum ${MAX_DEPTH} niveaux)`);
+    }
   }
 
   skipWs(): void {
@@ -174,31 +193,45 @@ class Parser {
   }
 
   private parseArray(): JsonValue[] {
-    this.i++; // [
-    const arr: JsonValue[] = [];
-    this.skipWs();
-    if (this.peek() === ']') {
-      this.i++;
-      return arr;
-    }
-    while (true) {
+    this.enter();
+    try {
+      this.i++; // [
+      const arr: JsonValue[] = [];
       this.skipWs();
-      arr.push(this.parseValue());
-      this.skipWs();
-      const c = this.peek();
-      if (c === ',') {
-        this.i++;
-        continue;
-      }
-      if (c === ']') {
+      if (this.peek() === ']') {
         this.i++;
         return arr;
       }
-      this.fail('« , » ou « ] » attendu');
+      while (true) {
+        this.skipWs();
+        arr.push(this.parseValue());
+        this.skipWs();
+        const c = this.peek();
+        if (c === ',') {
+          this.i++;
+          continue;
+        }
+        if (c === ']') {
+          this.i++;
+          return arr;
+        }
+        this.fail('« , » ou « ] » attendu');
+      }
+    } finally {
+      this.depth--;
     }
   }
 
   private parseObject(): { [key: string]: JsonValue } {
+    this.enter();
+    try {
+      return this.parseObjectBody();
+    } finally {
+      this.depth--;
+    }
+  }
+
+  private parseObjectBody(): { [key: string]: JsonValue } {
     this.i++; // {
     const obj: { [key: string]: JsonValue } = {};
     this.skipWs();
