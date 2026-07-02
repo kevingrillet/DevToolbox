@@ -1,5 +1,6 @@
 storybook-static/
 test-results/
+.lighthouseci/
 
 # Logs
 logs
@@ -50,6 +51,9 @@ web_modules/
 
 # TypeScript cache
 *.tsbuildinfo
+
+# Claude Code — index codegraph (généré par `codegraph serve --mcp`, machine-locale)
+.codegraph/
 
 # Optional npm cache directory
 .npm

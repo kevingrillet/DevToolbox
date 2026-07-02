@@ -71,9 +71,20 @@ export default defineConfig({
     exclude: ['node_modules', 'dist', 'tests/**', '.storybook/**'],
     coverage: {
       provider: 'v8',
+      // `text` pour la lecture locale, `text-summary` pour le récap, `json-summary`
+      // + `lcov` pour la CI (résumé exploitable dans le job / outils externes).
+      reporter: ['text', 'text-summary', 'json-summary', 'lcov'],
       reportsDirectory: './coverage',
       include: ['src/**/*.{ts,tsx}'],
       exclude: ['src/**/*.stories.tsx', 'src/test/**', 'src/main.tsx'],
+      // Seuils volontairement en dessous de la couverture réelle (marge de sécurité) :
+      // ils protègent contre une régression sans casser le vert au moindre ajout.
+      thresholds: {
+        lines: 80,
+        functions: 80,
+        statements: 80,
+        branches: 75,
+      },
     },
   },
 });

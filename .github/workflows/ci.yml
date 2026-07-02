@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 26
           cache: npm
@@ -30,8 +30,38 @@ jobs:
       - name: Vérification des types
         run: npm run typecheck
 
-      - name: Tests unitaires / composants
-        run: npm run test
+      - name: Tests unitaires / composants (+ couverture)
+        run: npm run test:cov
+
+      - name: Publier le résumé de couverture
+        if: always()
+        run: |
+          SUMMARY=coverage/coverage-summary.json
+          {
+            echo "## Couverture de tests"
+            if [ -f "$SUMMARY" ]; then
+              echo ""
+              echo "| Métrique | Couverture |"
+              echo "| --- | --- |"
+              node -e '
+                const t = require("./coverage/coverage-summary.json").total;
+                for (const k of ["lines","statements","functions","branches"]) {
+                  console.log(`| ${k} | ${t[k].pct}% (${t[k].covered}/${t[k].total}) |`);
+                }
+              '
+            else
+              echo ""
+              echo "_Aucun résumé de couverture généré._"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publier le rapport de couverture en artefact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 7
 
       - name: Installer les navigateurs Playwright
         run: npx playwright install --with-deps chromium
