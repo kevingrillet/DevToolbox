@@ -250,6 +250,10 @@ export interface Messages {
       copyNode: string;
       copied: string;
       empty: string;
+      /** Badge affiché quand l'entrée dépasse le plafond de taille. */
+      tooLarge: string;
+      /** Explication invitant à réduire la taille de l'entrée. */
+      tooLargeHint: string;
       types: {
         string: string;
         number: string;
@@ -291,6 +295,10 @@ export interface Messages {
       languages: Record<LinterLanguageKey, string>;
       severities: Record<LinterSeverityKey, string>;
       rules: Record<LinterRuleKey, string>;
+      /** Badge affiché quand la source dépasse le plafond de taille. */
+      tooLarge: string;
+      /** Explication invitant à réduire la taille de la source. */
+      tooLargeHint: string;
     };
     csv: {
       title: string;
@@ -304,6 +312,10 @@ export interface Messages {
       export: string;
       reset: string;
       empty: string;
+      /** Badge affiché quand l'entrée dépasse le plafond de taille. */
+      tooLarge: string;
+      /** Explication invitant à réduire la taille de l'entrée. */
+      tooLargeHint: string;
     };
     qr: {
       title: string;
@@ -589,6 +601,9 @@ const fr: Messages = {
       copyNode: 'Copier le nœud',
       copied: 'Copié ✓',
       empty: 'Saisissez du JSON pour l’explorer.',
+      tooLarge: 'Entrée trop volumineuse',
+      tooLargeHint:
+        'Ce document dépasse la taille maximale traitée par l’outil. Réduisez-le pour l’analyser et l’explorer.',
       types: {
         string: 'chaîne',
         number: 'nombre',
@@ -665,6 +680,9 @@ const fr: Messages = {
         'duplicate-key': 'Clé dupliquée',
         'json-syntax': 'JSON invalide',
       },
+      tooLarge: 'Source trop volumineuse',
+      tooLargeHint:
+        'Ce code dépasse la taille maximale analysée par le linter. Réduisez-le pour lancer l’analyse.',
     },
     csv: {
       title: 'Visualiseur CSV',
@@ -679,6 +697,9 @@ const fr: Messages = {
       export: 'Exporter',
       reset: 'Réinitialiser',
       empty: 'Saisissez ou importez un CSV pour l’afficher.',
+      tooLarge: 'Entrée trop volumineuse',
+      tooLargeHint:
+        'Ce CSV dépasse la taille maximale traitée par l’outil. Réduisez-le pour l’afficher en table.',
     },
     qr: {
       title: 'Générateur de QR code',
@@ -1037,6 +1058,9 @@ const en: Messages = {
       copyNode: 'Copy node',
       copied: 'Copied ✓',
       empty: 'Enter JSON to explore it.',
+      tooLarge: 'Input too large',
+      tooLargeHint:
+        'This document exceeds the maximum size the tool processes. Reduce it to validate and explore it.',
       types: {
         string: 'string',
         number: 'number',
@@ -1113,6 +1137,9 @@ const en: Messages = {
         'duplicate-key': 'Duplicate key',
         'json-syntax': 'Invalid JSON',
       },
+      tooLarge: 'Source too large',
+      tooLargeHint:
+        'This code exceeds the maximum size the linter analyzes. Reduce it to run the analysis.',
     },
     csv: {
       title: 'CSV viewer',
@@ -1127,6 +1154,9 @@ const en: Messages = {
       export: 'Export',
       reset: 'Reset',
       empty: 'Enter or import a CSV to display it.',
+      tooLarge: 'Input too large',
+      tooLargeHint:
+        'This CSV exceeds the maximum size the tool processes. Reduce it to display it as a table.',
     },
     qr: {
       title: 'QR code generator',

@@ -4,15 +4,18 @@
  * Queries dérivées de l'entrée : résultat d'analyse (valeur ou erreur localisée),
  * arbre typé, correspondances de recherche. État d'interaction : nœuds dépliés,
  * sélection manuelle, index de correspondance. Les ancêtres de la sélection sont
- * dépliés automatiquement (dérivé, sans effet). Aucune persistance.
+ * dépliés automatiquement (dérivé, sans effet). L'entrée peut être conservée en
+ * cache (toggle opt-in, désactivé par défaut).
  */
 import { useCallback, useMemo, useState } from 'react';
 import { parseJson, type ParseError, type ParseWarning } from './lib/parse';
 import { buildTree, type TreeNode } from './lib/tree';
 import { searchTree } from './lib/search';
 import { formatJson, minifyJson } from './lib/format';
+import { usePersistentBoolean, useCachedState } from '../../hooks/useCachedState';
 import { useDebouncedValue } from '../../hooks/useDebouncedValue';
 import { readTextFile } from '../../lib/readTextFile';
+import { INPUT_LIMITS, isInputTooLarge } from '../../lib/inputLimits';
 
 export interface JsonLinterStore {
   input: string;
@@ -26,9 +29,13 @@ export interface JsonLinterStore {
   matchSet: Set<string>;
   selected: string | null;
   selectedJson: string;
+  cacheEnabled: boolean;
+  /** L'entrée dépasse le plafond de taille : le traitement est suspendu. */
+  tooLarge: boolean;
   isOpen: (path: string) => boolean;
   setInput: (text: string) => void;
   setInputFile: (file: File) => void;
+  setCacheEnabled: (value: boolean) => void;
   setQuery: (query: string) => void;
   toggleNode: (path: string) => void;
   selectNode: (path: string) => void;
@@ -42,19 +49,23 @@ export interface JsonLinterStore {
 }
 
 export function useJsonLinterStore(): JsonLinterStore {
-  const [input, setInputState] = useState('');
+  const [cacheEnabled, setCacheEnabled] = usePersistentBoolean('devtools:json:cache');
+  const [input, setInputValue] = useCachedState('devtools:json:input', cacheEnabled);
   const [query, setQueryState] = useState('');
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set(['$']));
   const [manualSelected, setManualSelected] = useState<string | null>(null);
   const [matchIndex, setMatchIndex] = useState(0);
 
+  // Garde-fou de taille : au-delà du plafond, on ne parse pas (message dédié).
+  const tooLarge = isInputTooLarge(input, INPUT_LIMITS.json);
+
   // Le parsing (et la construction de l'arbre) ne suit que la saisie stabilisée :
   // la frappe reste fluide même sur de gros documents.
   const debouncedInput = useDebouncedValue(input);
-  const parsed = useMemo(
-    () => (debouncedInput.trim() === '' ? null : parseJson(debouncedInput)),
-    [debouncedInput],
-  );
+  const parsed = useMemo(() => {
+    if (isInputTooLarge(debouncedInput, INPUT_LIMITS.json)) return null;
+    return debouncedInput.trim() === '' ? null : parseJson(debouncedInput);
+  }, [debouncedInput]);
   const tree = useMemo(() => (parsed?.ok ? buildTree(parsed.value) : null), [parsed]);
   const error = parsed && !parsed.ok ? parsed.error : null;
   const warnings = parsed?.ok ? parsed.warnings : [];
@@ -104,11 +115,14 @@ export function useJsonLinterStore(): JsonLinterStore {
   const selectedNode = selected ? (byId.get(selected) ?? null) : null;
   const selectedJson = selectedNode ? formatJson(selectedNode.raw) : '';
 
-  const setInput = useCallback((text: string) => {
-    setInputState(text);
-    setMatchIndex(0);
-    setManualSelected(null);
-  }, []);
+  const setInput = useCallback(
+    (text: string) => {
+      setInputValue(text);
+      setMatchIndex(0);
+      setManualSelected(null);
+    },
+    [setInputValue],
+  );
 
   const setInputFile = useCallback(
     (file: File) => {
@@ -169,12 +183,12 @@ export function useJsonLinterStore(): JsonLinterStore {
   }, [input, setInput]);
 
   const reset = useCallback(() => {
-    setInputState('');
+    setInputValue('');
     setQueryState('');
     setExpanded(new Set(['$']));
     setManualSelected(null);
     setMatchIndex(0);
-  }, []);
+  }, [setInputValue]);
 
   return {
     input,
@@ -188,9 +202,12 @@ export function useJsonLinterStore(): JsonLinterStore {
     matchSet,
     selected,
     selectedJson,
+    cacheEnabled,
+    tooLarge,
     isOpen,
     setInput,
     setInputFile,
+    setCacheEnabled,
     setQuery,
     toggleNode,
     selectNode,

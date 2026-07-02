@@ -8,6 +8,7 @@ import { Textarea } from '../../components/ui/Textarea';
 import { Select } from '../../components/ui/Select';
 import { Checkbox } from '../../components/ui/Checkbox';
 import { Button } from '../../components/ui/Button';
+import { Callout } from '../../components/ui/Callout';
 import { useCsvStore } from './useCsvStore';
 import type { DelimiterChoice } from './useCsvStore';
 
@@ -100,6 +101,14 @@ export default function CsvViewerPage() {
           rows={6}
         />
       </div>
+
+      {store.tooLarge && (
+        <div className="mt-4">
+          <Callout tone="warning" badge={t('tools.csv.tooLarge')}>
+            {t('tools.csv.tooLargeHint')}
+          </Callout>
+        </div>
+      )}
 
       <div className="mt-6 overflow-x-auto rounded-card border bg-surface">
         {hasRows ? (

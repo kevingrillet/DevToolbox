@@ -10,6 +10,7 @@ import { useI18n } from '../../i18n/I18nProvider';
 import { Select } from '../../components/ui/Select';
 import { Textarea } from '../../components/ui/Textarea';
 import { Button } from '../../components/ui/Button';
+import { Checkbox } from '../../components/ui/Checkbox';
 import { CopyButton } from '../../components/ui/CopyButton';
 import { FORMATS } from './lib/codecs';
 import { useEncoderStore } from './useEncoderStore';
@@ -59,6 +60,13 @@ export default function EncoderPage() {
         <Button variant="ghost" onClick={store.reset}>
           {t('tools.encoder.reset')}
         </Button>
+        <div className="flex h-10 items-center">
+          <Checkbox
+            label={t('common.cache')}
+            checked={store.cacheEnabled}
+            onChange={store.setCacheEnabled}
+          />
+        </div>
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">

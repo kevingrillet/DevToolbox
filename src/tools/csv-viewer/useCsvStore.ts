@@ -11,6 +11,9 @@ import { sortRows, type SortDir } from './lib/sort';
 import { usePersistentBoolean, useCachedState } from '../../hooks/useCachedState';
 import { useDebouncedValue } from '../../hooks/useDebouncedValue';
 import { readTextFile } from '../../lib/readTextFile';
+import { INPUT_LIMITS, isInputTooLarge } from '../../lib/inputLimits';
+
+const EMPTY_TABLE: CsvTable = { headers: [], rows: [], columnCount: 0 };
 
 export type DelimiterChoice = 'auto' | 'comma' | 'semicolon' | 'tab';
 
@@ -27,6 +30,8 @@ export interface CsvStore {
   sortColumn: number | null;
   sortDir: SortDir;
   cacheEnabled: boolean;
+  /** L'entrée dépasse le plafond de taille : l'affichage est suspendu. */
+  tooLarge: boolean;
   table: CsvTable;
   sortedRows: string[][];
   /** CSV sérialisé de la grille telle qu'affichée (triée), prêt à exporter. */
@@ -48,13 +53,19 @@ export function useCsvStore(): CsvStore {
   const [sortColumn, setSortColumn] = useState<number | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>('asc');
 
+  // Garde-fou de taille : au-delà du plafond, on n'analyse pas (message dédié).
+  const tooLarge = isInputTooLarge(input, INPUT_LIMITS.csv);
+
   // Le parsing ne suit que la saisie stabilisée (la frappe reste fluide).
   const debouncedInput = useDebouncedValue(input);
   const delimiter =
     delimiterChoice === 'auto' ? detectDelimiter(debouncedInput) : DELIMITER_CHAR[delimiterChoice];
 
   const table = useMemo(
-    () => toTable(debouncedInput, delimiter, hasHeader),
+    () =>
+      isInputTooLarge(debouncedInput, INPUT_LIMITS.csv)
+        ? EMPTY_TABLE
+        : toTable(debouncedInput, delimiter, hasHeader),
     [debouncedInput, delimiter, hasHeader],
   );
 
@@ -96,6 +107,7 @@ export function useCsvStore(): CsvStore {
     sortColumn,
     sortDir,
     cacheEnabled,
+    tooLarge,
     table,
     sortedRows,
     csvOutput,

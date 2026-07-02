@@ -1,8 +1,9 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
 import { usePersistentBoolean, useCachedState } from './useCachedState';
 
 beforeEach(() => window.localStorage.clear());
+afterEach(() => vi.restoreAllMocks());
 
 describe('usePersistentBoolean', () => {
   it('utilise le fallback quand rien n’est stocké', () => {
@@ -61,5 +62,27 @@ describe('useCachedState', () => {
     );
     rerender({ enabled: false });
     expect(window.localStorage.getItem('devtools:test:val')).toBeNull();
+  });
+
+  it('reste fonctionnel quand localStorage lève QuotaExceededError (fallback gracieux)', () => {
+    // Simule un quota saturé : `setItem` lève, comme un navigateur plein ou en
+    // mode privé restrictif. Le hook doit continuer à exposer la valeur en
+    // mémoire sans propager l'erreur.
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('quota', 'QuotaExceededError');
+    });
+
+    const { result } = renderHook(() => useCachedState('devtools:test:val', true, ''));
+    expect(() => act(() => result.current[1]('trop gros'))).not.toThrow();
+    // La valeur reste disponible dans l'état, seule la persistance est perdue.
+    expect(result.current[0]).toBe('trop gros');
+  });
+
+  it('démarre sur la valeur initiale si la lecture de localStorage échoue', () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new DOMException('blocked', 'SecurityError');
+    });
+    const { result } = renderHook(() => useCachedState('devtools:test:val', true, 'defaut'));
+    expect(result.current[0]).toBe('defaut');
   });
 });

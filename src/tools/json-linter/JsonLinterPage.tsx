@@ -7,6 +7,7 @@ import { useI18n } from '../../i18n/I18nProvider';
 import { Textarea } from '../../components/ui/Textarea';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
+import { Checkbox } from '../../components/ui/Checkbox';
 import { Badge } from '../../components/ui/Badge';
 import { Callout } from '../../components/ui/Callout';
 import { CopyButton } from '../../components/ui/CopyButton';
@@ -60,8 +61,18 @@ export default function JsonLinterPage() {
             <Button size="sm" variant="ghost" onClick={store.reset}>
               {t('tools.json.reset')}
             </Button>
+            <Checkbox
+              label={t('common.cache')}
+              checked={store.cacheEnabled}
+              onChange={store.setCacheEnabled}
+            />
           </div>
 
+          {store.tooLarge && (
+            <Callout tone="warning" badge={t('tools.json.tooLarge')}>
+              {t('tools.json.tooLargeHint')}
+            </Callout>
+          )}
           {store.valid && <Badge variant="success">{t('tools.json.valid')}</Badge>}
           {store.warnings.length > 0 && (
             <Callout tone="warning" badge={t('tools.json.precision')}>

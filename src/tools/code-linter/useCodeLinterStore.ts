@@ -9,6 +9,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { usePersistentBoolean, useCachedState } from '../../hooks/useCachedState';
 import { useDebouncedValue } from '../../hooks/useDebouncedValue';
 import { readTextFile } from '../../lib/readTextFile';
+import { INPUT_LIMITS, isInputTooLarge } from '../../lib/inputLimits';
 import { LANGUAGES, LANGUAGES_BY_ID } from './lib/languages';
 import {
   defaultConfig,
@@ -35,6 +36,8 @@ export interface CodeLinterStore {
   issues: LintIssue[];
   counts: Record<Severity, number>;
   cacheEnabled: boolean;
+  /** La source dépasse le plafond de taille : le lint est suspendu. */
+  tooLarge: boolean;
   /** Le langage courant propose-t-il un reformatage ? */
   canFormat: boolean;
   setLanguage: (id: string) => void;
@@ -58,10 +61,16 @@ export function useCodeLinterStore(): CodeLinterStore {
   const language = LANGUAGES_BY_ID.get(languageId) ?? FIRST;
   const config = configs[languageId];
 
+  // Garde-fou de taille : au-delà du plafond, on ne lint pas (message dédié).
+  const tooLarge = isInputTooLarge(source, INPUT_LIMITS.codeLinter);
+
   // Le lint ne suit que la saisie stabilisée (la frappe reste fluide).
   const debouncedSource = useDebouncedValue(source);
   const issues = useMemo(
-    () => runLint(language, debouncedSource, config),
+    () =>
+      isInputTooLarge(debouncedSource, INPUT_LIMITS.codeLinter)
+        ? []
+        : runLint(language, debouncedSource, config),
     [language, debouncedSource, config],
   );
 
@@ -124,6 +133,7 @@ export function useCodeLinterStore(): CodeLinterStore {
     issues,
     counts,
     cacheEnabled,
+    tooLarge,
     canFormat,
     setLanguage,
     setCacheEnabled,

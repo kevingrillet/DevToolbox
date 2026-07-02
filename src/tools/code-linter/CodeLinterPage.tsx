@@ -10,6 +10,7 @@ import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { Checkbox } from '../../components/ui/Checkbox';
 import { Panel } from '../../components/ui/Panel';
+import { Callout } from '../../components/ui/Callout';
 import { Accordion } from '../../components/ui/Accordion';
 import { LANGUAGES } from './lib/languages';
 import { useCodeLinterStore } from './useCodeLinterStore';
@@ -130,7 +131,11 @@ export default function CodeLinterPage() {
                 ? t('tools.codeLinter.noIssues')
                 : `${store.issues.length} ${t('tools.codeLinter.results')}`}
             </p>
-            {store.issues.length === 0 ? (
+            {store.tooLarge ? (
+              <Callout tone="warning" badge={t('tools.codeLinter.tooLarge')}>
+                {t('tools.codeLinter.tooLargeHint')}
+              </Callout>
+            ) : store.issues.length === 0 ? (
               <p className="text-sm text-fg-muted">{t('tools.codeLinter.noIssues')}</p>
             ) : (
               <div className="flex flex-col gap-4">

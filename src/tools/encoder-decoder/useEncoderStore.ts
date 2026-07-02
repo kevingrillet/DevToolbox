@@ -5,13 +5,15 @@
  * Queries (dérivées, pures) : `codecResult` ou `jwtResult` selon le format.
  * Commands : changer de format/sens, saisir, intervertir, réinitialiser.
  *
- * Aucune persistance (conforme à la spec : l'outil démarre vierge à chaque visite).
- * Les composants de présentation ne contiennent aucune logique métier.
+ * L'entrée peut être conservée en cache (toggle opt-in, désactivé par défaut) :
+ * l'outil reste vierge au premier chargement, conformément à la philosophie du
+ * projet. Les composants de présentation ne contiennent aucune logique métier.
  */
 import { useCallback, useMemo, useState } from 'react';
 import { CODECS_BY_ID, FORMATS_BY_ID } from './lib/codecs';
 import type { CodecResult } from './lib/types';
 import { decodeJwt, type JwtResult } from './lib/jwt';
+import { usePersistentBoolean, useCachedState } from '../../hooks/useCachedState';
 
 export type Direction = 'encode' | 'decode';
 
@@ -20,6 +22,7 @@ export interface EncoderStore {
   formatId: string;
   direction: Direction;
   input: string;
+  cacheEnabled: boolean;
   // dérivés
   isJwt: boolean;
   /** Résultat codec (null si le format courant est le JWT). */
@@ -30,14 +33,16 @@ export interface EncoderStore {
   setFormat: (id: string) => void;
   setDirection: (direction: Direction) => void;
   setInput: (value: string) => void;
+  setCacheEnabled: (value: boolean) => void;
   swap: () => void;
   reset: () => void;
 }
 
 export function useEncoderStore(): EncoderStore {
+  const [cacheEnabled, setCacheEnabled] = usePersistentBoolean('devtools:encoder:cache');
   const [formatId, setFormatId] = useState('base64');
   const [direction, setDirectionState] = useState<Direction>('encode');
-  const [input, setInputState] = useState('');
+  const [input, setInput] = useCachedState('devtools:encoder:input', cacheEnabled);
 
   const isJwt = FORMATS_BY_ID.get(formatId)?.kind === 'jwt';
 
@@ -55,8 +60,7 @@ export function useEncoderStore(): EncoderStore {
 
   const setFormat = useCallback((id: string) => setFormatId(id), []);
   const setDirection = useCallback((next: Direction) => setDirectionState(next), []);
-  const setInput = useCallback((value: string) => setInputState(value), []);
-  const reset = useCallback(() => setInputState(''), []);
+  const reset = useCallback(() => setInput(''), [setInput]);
 
   // Intervertir : la sortie courante devient l'entrée, et le sens s'inverse — de
   // sorte que la nouvelle sortie reproduit l'entrée d'origine (aller-retour).
@@ -65,21 +69,23 @@ export function useEncoderStore(): EncoderStore {
     if (!codec) return; // JWT : pas d'interversion
     const result = direction === 'encode' ? codec.encode(input) : codec.decode(input);
     if (result.ok) {
-      setInputState(result.value);
+      setInput(result.value);
       setDirectionState((current) => (current === 'encode' ? 'decode' : 'encode'));
     }
-  }, [formatId, direction, input]);
+  }, [formatId, direction, input, setInput]);
 
   return {
     formatId,
     direction,
     input,
+    cacheEnabled,
     isJwt,
     codecResult,
     jwtResult,
     setFormat,
     setDirection,
     setInput,
+    setCacheEnabled,
     swap,
     reset,
   };

@@ -10,6 +10,11 @@
  */
 import { useCallback, useEffect, useState } from 'react';
 
+// Tous les accès à `localStorage` sont défensifs : l'API peut être absente
+// (SSR, `window` non défini), inaccessible (navigation privée / cookies bloqués,
+// où le simple accès à `window.localStorage` peut lever `SecurityError`) ou
+// saturée à l'écriture (`QuotaExceededError`). Dans tous ces cas on dégrade en
+// douceur — l'outil reste fonctionnel, seule la persistance est perdue.
 function read(key: string): string | null {
   try {
     return window.localStorage.getItem(key);
@@ -22,7 +27,7 @@ function write(key: string, value: string): void {
   try {
     window.localStorage.setItem(key, value);
   } catch {
-    /* localStorage indisponible : on ignore. */
+    /* Quota dépassé (QuotaExceededError) ou storage indisponible : on ignore. */
   }
 }
 
