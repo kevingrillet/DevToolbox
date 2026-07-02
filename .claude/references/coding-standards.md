@@ -1,7 +1,8 @@
 # Coding standards
 
 Conventions **transverses** aux projets Node de ce workspace. Complète l'`AGENTS.md`
-du dépôt (qui fait foi en cas de conflit). Volontairement court.
+du dépôt (qui fait foi en cas de conflit). Volontairement court : ci-dessous des
+**rappels de règles** ; le détail (listes exhaustives, exemples) vit dans l'`AGENTS.md`.
 
 ## Avant de conclure
 
@@ -15,11 +16,10 @@ du dépôt (qui fait foi en cas de conflit). Volontairement court.
 
 ## Thèmes (règle absolue)
 
-- **Toujours les tokens** : `bg-canvas`, `bg-surface`, `text-fg`, `text-fg-muted`,
-  `bg-accent` / `text-accent-fg`, `accent-strong`, `text-danger` / `text-warning` /
-  `text-success`, `rounded-card` / `rounded-control`, `shadow-card` / `shadow-btn`.
-- **Jamais** de couleur Tailwind en dur (`text-red-500`…) : ça casse une des 8
-  combinaisons (4 identités × clair/sombre). Tokens définis dans `src/index.css`.
+- **Toujours les tokens de thème** (`bg-canvas`, `text-fg`, `bg-accent`…), **jamais** de
+  couleur Tailwind en dur (`text-red-500`…) : ça casse une des 8 combinaisons
+  (4 identités × clair/sombre).
+- Liste complète des tokens : `AGENTS.md § Thèmes` ; valeurs définies dans `src/index.css`.
 
 ## i18n
 

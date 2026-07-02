@@ -3,20 +3,8 @@
 Site web **statique** (GitHub Pages), **100% client-side**. Complète l'`AGENTS.md`
 du dépôt (qui fait foi). Volontairement court.
 
-## Stack commune
-
-Vite · React + TypeScript strict · Tailwind CSS (CSS-first, `@theme inline`) ·
-Vitest + Testing Library · Playwright · Storybook · ESLint (flat) + Prettier ·
-PWA (offline) · CI/CD GitHub Actions (qualité + tests → déploiement Pages).
-
-> Versions exactes : voir `package.json` (ne pas les figer ici pour éviter l'obsolescence).
-
-## Principes transverses
-
-- Dépendances runtime minimales (`react`, `react-dom` + libs domaine justifiées, isolées).
-- Thèmes runtime à 2 axes indépendants : identité (`data-theme`) × clair/sombre (`dark`).
-- i18n maison FR/EN typée (`src/i18n/`).
-- Déploiement : `deploy.yml` à chaque push sur `main` ; `base: './'` (sous-chemin Pages).
+Stack, thèmes, i18n, dépendances minimales et déploiement : voir `AGENTS.md` (détail) et
+`coding-standards.md` (règles transverses). Versions exactes : `package.json`.
 
 ## Ce dépôt : DevToolbox (hub d'outils dev)
 
