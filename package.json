@@ -1,7 +1,7 @@
 {
   "name": "devtools-hub",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "description": "DevTools Hub — collection d'outils pour développeurs, 100% statique et client-side : React + TypeScript + Vite, thèmes runtime, i18n FR/EN, PWA, tests (Vitest + Playwright), Storybook.",
   "license": "GPL-3.0-or-later",
@@ -26,8 +26,8 @@
     "typecheck:watch": "tsc -b --watch",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "clean": "rimraf dist node_modules coverage storybook-static playwright-report .vite test-results",
-    "clean:dist": "rimraf dist coverage storybook-static playwright-report .vite test-results",
+    "clean": "rimraf dist node_modules coverage storybook-static playwright-report .vite test-results .lighthouseci",
+    "clean:dist": "rimraf dist coverage storybook-static playwright-report .vite test-results .lighthouseci",
     "check": "npm run format:check && npm run lint && npm run typecheck && npm run test"
   },
   "dependencies": {
@@ -38,7 +38,9 @@
     "react-dom": "^19.2.7"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.1",
     "@eslint/js": "^10.0.1",
+    "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.49.1",
     "@storybook/addon-docs": "^10.4.6",
     "@storybook/react": "^10.4.6",

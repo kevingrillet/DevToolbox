@@ -3,6 +3,56 @@
 Toutes les modifications notables de ce projet sont consignées ici.
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 
+## [0.3.0] — 2026-07-02
+
+### Ajouts
+
+- **Cache opt-in étendu** aux outils **JSON Linter** et **Encodeur / Décodeur**
+  (toggle `Conserver en cache`, désactivé par défaut, via
+  `usePersistentBoolean` + `useCachedState`). Hash, Faker et Palette en restent
+  volontairement exclus (source fichier / sortie générée / état structuré — cache
+  incohérent) ; justification dans `AGENTS.md`.
+- **Garde-fous de taille d'entrée** (`src/lib/inputLimits.ts`, pur et testé) sur les
+  outils à calcul lourd — **JSON, CSV, Linter de code** : au-delà d'un plafond de
+  caractères, le traitement est suspendu et un message i18n clair (FR/EN) s'affiche,
+  plutôt que de bloquer l'UI. Le **Comparateur de texte** conserve en plus son
+  plafond matriciel dédié (`DiffTooLargeError`). Ce sont des seuils, pas des Web Workers.
+- **Tests d'accessibilité unitaires** (convention `*.a11y.test.tsx` + helper
+  `src/test/a11y.tsx`, repris du socle NodeTemplate) pour `ThemeToggle`,
+  `ThemeSelector`, `LanguageSwitcher` et la carte dépliable `Section` (rôles, ARIA
+  d'état, navigation clavier, effets observables).
+- **Stories Storybook** pour les composants composites sans catalogue : `DiffView`,
+  `JsonTreeView`, `QrForm` et la page `MarkdownEditorPage`.
+- **Guide d'extension enrichi** « Ajouter un outil » dans `AGENTS.md` (procédure
+  step-by-step : lib pure + tests, store, cache/garde-fou, présentation, registre,
+  i18n FR/EN, story, test a11y, e2e + axe).
+
+### Sécurité
+
+- **Éditeur Markdown** : durcissement de la sanitization DOMPurify — balises à
+  risque bannies (`script`, `style`, `iframe`, `object`, `embed`, `form`…), retrait
+  défensif de **tout attribut d'événement** (`on*`) et des `style` inline, et liste
+  blanche de protocoles d'URI (neutralise `javascript:`, `data:`, `vbscript:`…).
+  Batterie de **tests XSS explicites** (`<svg onload>`, `<img onerror>`, href
+  `javascript:`, `<iframe>`, `<style>`, `data:` …).
+- **Parseur JSON maison** : **limite de profondeur d'imbrication** (1000 niveaux) qui
+  lève une erreur localisée explicite au lieu d'un débordement de pile sur un document
+  pathologiquement imbriqué. Tests OK / dépassement (objets et tableaux).
+- **`useCachedState`** : accès `localStorage` durcis (gestion explicite de
+  `QuotaExceededError` et d'un storage indisponible, dégradation gracieuse) + tests.
+
+### Outillage et CI
+
+- **Couverture Vitest** : `npm run test:cov` (reporters `text`/`text-summary`/
+  `json-summary`/`lcov`) et **seuils** dans `vite.config.ts` (lines/functions/
+  statements 80, branches 75). La CI publie un résumé de couverture + l'artefact
+  `coverage/`.
+- **axe-core** dans le smoke e2e (`@axe-core/playwright`, `scanSeriousA11yViolations`
+  sur l'accueil, clair + sombre).
+- **Lighthouse CI** (`@lhci/cli`, `lighthouserc.json`, workflow `lighthouse.yml`) :
+  accessibilité bloquante (≥ 0.9), performance/best-practices/SEO en avertissement.
+  `.lighthouseci/` ignoré par Git et nettoyé par les scripts `clean`.
+
 ## [0.2.0] — 2026-07-01
 
 ### Ajouts
