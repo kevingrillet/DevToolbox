@@ -12,11 +12,39 @@ import DOMPurify from 'dompurify';
 
 marked.setOptions({ gfm: true, breaks: false });
 
-// Durcissement : tout lien ouvrant un nouvel onglet reçoit `rel="noopener
-// noreferrer"` (anti reverse-tabnabbing — la config DOMPurify par défaut autorise
-// `target` mais n'ajoute pas `rel`).
+// Balises à risque explicitement bannies, en plus de ce que le profil HTML écarte
+// déjà : contenu embarqué/exécutable (`script`, `iframe`, `object`, `embed`),
+// injection de style (`style`), et surfaces de soumission (`form`, `input`…).
+const FORBIDDEN_TAGS = [
+  'script',
+  'style',
+  'iframe',
+  'object',
+  'embed',
+  'form',
+  'input',
+  'button',
+  'base',
+  'link',
+  'meta',
+];
+
+// Attributs bannis : tout `style` inline (exfiltration/clickjacking via CSS) et
+// les attributs à risque. Les gestionnaires d'événements (`on*`) sont retirés par
+// le hook ci-dessous (aucune liste noire n'étant exhaustive côté DOMPurify).
+const FORBIDDEN_ATTRS = ['style', 'srcset', 'formaction', 'xlink:href'];
+
+// Durcissement (exécuté après chaque nettoyage d'attributs) :
+//  1. on retire de façon défensive TOUT attribut commençant par `on` (onload,
+//     onclick, onerror…) — ceinture + bretelles par-dessus l'allow-list DOMPurify ;
+//  2. tout lien ouvrant un nouvel onglet reçoit `rel="noopener noreferrer"`
+//     (anti reverse-tabnabbing — DOMPurify autorise `target` mais n'ajoute pas `rel`).
 DOMPurify.addHook('afterSanitizeAttributes', (node) => {
-  if (node instanceof Element && node.tagName === 'A' && node.hasAttribute('target')) {
+  if (!(node instanceof Element)) return;
+  for (const attr of Array.from(node.attributes)) {
+    if (/^on/i.test(attr.name)) node.removeAttribute(attr.name);
+  }
+  if (node.tagName === 'A' && node.hasAttribute('target')) {
     node.setAttribute('rel', 'noopener noreferrer');
   }
 });
@@ -26,12 +54,24 @@ DOMPurify.addHook('afterSanitizeAttributes', (node) => {
  *
  * `USE_PROFILES: { html: true }` restreint la sortie au seul HTML : SVG et MathML
  * (inutiles pour un éditeur Markdown, et vecteurs d'attaque plus subtils) sont
- * écartés. `target` est ré-autorisé explicitement (le profil HTML le retire) afin
- * de préserver l'intention de l'auteur, mais sécurisé par le `rel` ajouté ci-dessus.
+ * écartés. On bannit en plus explicitement les balises/attributs à risque et on
+ * force `ALLOWED_URI_REGEXP` à une liste blanche de protocoles sûrs (les schémas
+ * dangereux comme `javascript:` ou `data:` sont donc neutralisés dans les `href`).
+ * `target` est ré-autorisé (le profil HTML le retire) mais sécurisé par le `rel`
+ * ajouté dans le hook ci-dessus.
  */
 export function renderMarkdown(md: string): string {
   const rawHtml = marked.parse(md, { async: false }) as string;
-  return DOMPurify.sanitize(rawHtml, { USE_PROFILES: { html: true }, ADD_ATTR: ['target'] });
+  return DOMPurify.sanitize(rawHtml, {
+    USE_PROFILES: { html: true },
+    ADD_ATTR: ['target'],
+    FORBID_TAGS: FORBIDDEN_TAGS,
+    FORBID_ATTR: FORBIDDEN_ATTRS,
+    // Protocoles autorisés dans les URI (href/src) : http(s), mailto, tel, ftp,
+    // ancres (#…) et chemins relatifs. Tout le reste (javascript:, data:, vbscript:…)
+    // est retiré.
+    ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto|tel|ftp):|[^a-z]|[a-z+.-]+(?:[^a-z+.\-:]|$))/i,
+  });
 }
 
 const EXAMPLE_FR = `# Bienvenue 👋

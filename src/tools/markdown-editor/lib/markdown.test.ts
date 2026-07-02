@@ -37,6 +37,47 @@ describe('renderMarkdown', () => {
   });
 });
 
+describe('renderMarkdown — durcissement anti-XSS', () => {
+  // Chaque vecteur classique doit ressortir neutralisé (ni balise dangereuse, ni
+  // gestionnaire d'événement, ni protocole exécutable) tout en gardant le contenu.
+  const vectors: Array<[string, string]> = [
+    ['<svg onload=alert(1)>', 'onload'],
+    ['<img src=x onerror="alert(1)">', 'onerror'],
+    ['<div onclick="alert(1)">clic</div>', 'onclick'],
+    ['<body onload=alert(1)>', 'onload'],
+    ['<iframe src="javascript:alert(1)"></iframe>', '<iframe'],
+    ['<object data="data:text/html,<script>alert(1)</script>"></object>', '<object'],
+    ['<embed src="x.svg">', '<embed'],
+    ['<style>body{background:url(javascript:alert(1))}</style>', '<style'],
+    ['<a href="javascript:alert(1)">x</a>', 'javascript:'],
+    ['<a href="vbscript:msgbox(1)">x</a>', 'vbscript:'],
+    ['<a href="data:text/html;base64,PHNjcmlwdD4=">x</a>', 'data:text/html'],
+  ];
+
+  it.each(vectors)('neutralise %s', (input, forbidden) => {
+    const html = renderMarkdown(input).toLowerCase();
+    expect(html).not.toContain(forbidden.toLowerCase());
+  });
+
+  it('retire un gestionnaire d’événement même sur une balise autorisée', () => {
+    const html = renderMarkdown('<p onmouseover="steal()">texte</p>');
+    expect(html.toLowerCase()).not.toContain('onmouseover');
+    // Le contenu légitime est préservé.
+    expect(html).toContain('texte');
+  });
+
+  it('supprime les attributs style inline', () => {
+    const html = renderMarkdown('<p style="position:fixed;top:0">x</p>');
+    expect(html.toLowerCase()).not.toContain('style=');
+    expect(html).toContain('x');
+  });
+
+  it('conserve les liens http(s) légitimes', () => {
+    const html = renderMarkdown('[ok](https://example.com)');
+    expect(html).toContain('href="https://example.com"');
+  });
+});
+
 describe('buildHtmlDocument', () => {
   it('emballe le fragment dans un document complet', () => {
     const doc = buildHtmlDocument('<p>hi</p>', 'T');
