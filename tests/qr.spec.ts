@@ -8,7 +8,9 @@ test('depuis l’accueil : génère un QR à partir d’un texte', async ({ page
   // Tant que le formulaire est vide, l'aperçu affiche l'invite.
   await expect(page.getByText(/Remplissez le formulaire/i)).toBeVisible();
 
-  await page.getByLabel('Texte', { exact: true }).fill('https://exemple.com');
+  // « Texte » nomme à la fois le type (radio) et le champ : on cible le champ par
+  // son rôle pour lever l'ambiguïté.
+  await page.getByRole('textbox', { name: 'Texte', exact: true }).fill('https://exemple.com');
 
   // Le QR est généré (image accessible) et l'export PNG devient disponible.
   await expect(page.getByRole('img', { name: /QR code généré/i })).toBeVisible();
