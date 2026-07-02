@@ -26,4 +26,15 @@ describe('LogoControls', () => {
     // FileReader.readAsDataURL est asynchrone → on attend l'appel.
     await waitFor(() => expect(onChange).toHaveBeenCalledWith(expect.stringMatching(/^data:/)));
   });
+
+  it('refuse un logo trop lourd et affiche une alerte', async () => {
+    const onChange = vi.fn();
+    const { container } = render(<LogoControls logo="" onChange={onChange} />);
+    const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+    // Fichier > 1 Mio → garde-fou de poids déclenché.
+    const big = new File(['a'.repeat(1024 * 1024 + 1)], 'big.png', { type: 'image/png' });
+    fireEvent.change(input, { target: { files: [big] } });
+    expect(await screen.findByRole('alert')).toHaveTextContent(/trop volumineuse/i);
+    expect(onChange).not.toHaveBeenCalled();
+  });
 });

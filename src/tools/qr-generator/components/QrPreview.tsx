@@ -19,6 +19,7 @@ import {
   type QrColors,
 } from '../lib/qr';
 import { contrastStatus } from '../lib/contrast';
+import { exceedsQrCapacity } from '../lib/limits';
 import { useQrT } from '../i18n';
 
 export interface QrPreviewProps {
@@ -68,6 +69,11 @@ export function QrPreview({
   const [copyError, setCopyError] = useState(false);
   const [encodeError, setEncodeError] = useState(false);
 
+  // Garde-fou de capacité : au-delà de la contenance d'un QR (fonction du niveau
+  // de correction), on affiche un message clair plutôt que de laisser le moteur
+  // échouer avec une erreur technique brute.
+  const tooLong = ready && exceedsQrCapacity(text, ecLevel);
+
   const { dark, light } = colors;
   const contrast = contrastStatus(dark, light);
   const contrastWarning =
@@ -88,7 +94,9 @@ export function QrPreview({
   // (Re)dessine l'aperçu lorsque le contenu ou le style change. Une densité forcée
   // trop basse pour les données fait échouer l'encodage : on le signale.
   useEffect(() => {
-    if (!ready || !containerRef.current) return;
+    // On ne tente pas le rendu si le contenu dépasse la capacité : le garde-fou
+    // `tooLong` affiche déjà un message dédié.
+    if (!ready || tooLong || !containerRef.current) return;
     try {
       const options = { ...renderOptions, width: PREVIEW_WIDTH };
       if (!qrRef.current) {
@@ -139,7 +147,7 @@ export function QrPreview({
       .catch(flashCopyError);
   };
 
-  const canExport = ready && !encodeError;
+  const canExport = ready && !encodeError && !tooLong;
 
   return (
     <div className="flex flex-col items-center gap-4">
@@ -149,10 +157,13 @@ export function QrPreview({
           data-testid="qr-canvas"
           role="img"
           aria-label={qrLabel}
-          className={ready && !encodeError ? '' : 'hidden'}
+          className={ready && !encodeError && !tooLong ? '' : 'hidden'}
         />
         {!ready && <p className="px-4 text-center text-sm text-fg-muted">{t('preview.prompt')}</p>}
-        {ready && encodeError && (
+        {ready && tooLong && (
+          <p className="px-4 text-center text-sm text-danger">{t('preview.tooLong')}</p>
+        )}
+        {ready && !tooLong && encodeError && (
           <p className="px-4 text-center text-sm text-danger">{t('preview.error')}</p>
         )}
       </div>

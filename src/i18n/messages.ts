@@ -330,6 +330,7 @@ export interface Messages {
         copied: string;
         copyHint: string;
         error: string;
+        tooLong: string;
         alt: string;
         foregroundColor: string;
         backgroundColor: string;
@@ -349,7 +350,7 @@ export interface Messages {
         logo: string;
         output: string;
       };
-      logo: { upload: string; remove: string; hint: string; alt: string };
+      logo: { upload: string; remove: string; hint: string; alt: string; tooLarge: string };
       output: {
         densityLabel: string;
         densityAuto: string;
@@ -717,6 +718,8 @@ const fr: Messages = {
         copyHint:
           'Copie non disponible sur ce navigateur : faites un clic droit sur le QR puis « Copier l’image ».',
         error: 'Erreur de génération',
+        tooLong:
+          'Contenu trop long pour un QR code : réduisez le texte ou baissez le niveau de correction d’erreur.',
         alt: 'QR code généré',
         foregroundColor: 'Couleur du QR code',
         backgroundColor: 'Couleur du fond',
@@ -744,6 +747,7 @@ const fr: Messages = {
         remove: 'Retirer le logo',
         hint: "Le logo masque une partie du QR : la correction d'erreur est automatiquement passée en « Maximale (H) » pour préserver la lisibilité. Préférez un logo simple, sur fond transparent ou clair.",
         alt: 'Logo du QR code',
+        tooLarge: 'Image trop volumineuse (max 1 Mo) : choisissez un logo plus léger.',
       },
       output: {
         densityLabel: 'Densité (version)',
@@ -1173,6 +1177,8 @@ const en: Messages = {
         copyHint:
           'Copy isn’t available in this browser: right-click the QR and choose “Copy image”.',
         error: 'Generation error',
+        tooLong:
+          'Content too long for a QR code: shorten the text or lower the error-correction level.',
         alt: 'Generated QR code',
         foregroundColor: 'QR code color',
         backgroundColor: 'Background color',
@@ -1199,6 +1205,7 @@ const en: Messages = {
         remove: 'Remove logo',
         hint: 'The logo covers part of the QR: error correction is automatically set to “High (H)” to keep it scannable. Prefer a simple logo on a transparent or light background.',
         alt: 'QR code logo',
+        tooLarge: 'Image too large (max 1 MB): choose a lighter logo.',
       },
       output: {
         densityLabel: 'Density (version)',

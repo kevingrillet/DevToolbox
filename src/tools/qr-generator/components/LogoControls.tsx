@@ -5,7 +5,8 @@
  * donnée envoyée) puis remonté via `onChange`. Le rendu et l'incrustation sont
  * gérés par l'adaptateur `qr` / `qr-code-styling`.
  */
-import { useRef, type ChangeEvent } from 'react';
+import { useRef, useState, type ChangeEvent } from 'react';
+import { isLogoTooLarge } from '../lib/limits';
 import { useQrT } from '../i18n';
 
 export interface LogoControlsProps {
@@ -17,12 +18,19 @@ export interface LogoControlsProps {
 export function LogoControls({ logo, onChange }: LogoControlsProps) {
   const { t } = useQrT();
   const inputRef = useRef<HTMLInputElement>(null);
+  const [tooLarge, setTooLarge] = useState(false);
 
   const handleFile = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     // On réinitialise la valeur pour pouvoir ré-importer le même fichier ensuite.
     event.target.value = '';
     if (!file) return;
+    // Garde-fou de poids : un logo trop lourd alourdit inutilement le QR (data URL).
+    if (isLogoTooLarge(file.size)) {
+      setTooLarge(true);
+      return;
+    }
+    setTooLarge(false);
     const reader = new FileReader();
     reader.onload = () => onChange(typeof reader.result === 'string' ? reader.result : '');
     reader.readAsDataURL(file);
@@ -72,6 +80,12 @@ export function LogoControls({ logo, onChange }: LogoControlsProps) {
           </svg>
           {t('logo.upload')}
         </button>
+      )}
+
+      {tooLarge && (
+        <p role="alert" className="text-xs text-danger">
+          {t('logo.tooLarge')}
+        </p>
       )}
 
       <p className="text-xs text-fg-muted">{t('logo.hint')}</p>
