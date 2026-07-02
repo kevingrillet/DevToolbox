@@ -3,6 +3,24 @@
 Toutes les modifications notables de ce projet sont consignées ici.
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 
+## [0.3.1] — 2026-07-02
+
+### Ajouts
+
+- **Générateur de QR — parité avec l'app dédiée QrCodeGenerator.** Report des
+  garde-fous qui manquaient à l'outil porté (`src/tools/qr-generator/lib/limits.ts`,
+  pur et testé) :
+  - **capacité du QR** : au-delà de la contenance (fonction du niveau de correction),
+    l'aperçu affiche un message clair (`tools.qr.preview.tooLong`, FR/EN) et bloque
+    l'export au lieu de laisser le moteur `qr-code-styling` échouer ;
+  - **poids du logo importé** : refus au-delà de 1 Mio avec message
+    (`tools.qr.logo.tooLarge`, FR/EN).
+
+### Corrections
+
+- **Générateur de QR** : validation d'email plus stricte (exige un vrai TLD, rejette
+  `x@x.x` / `a@b`, accepte les domaines internationalisés), alignée sur l'app dédiée.
+
 ## [0.3.0] — 2026-07-02
 
 ### Ajouts
