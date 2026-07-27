@@ -34,7 +34,7 @@
     "dompurify": "^3.4.12",
     "marked": "^18.0.5",
     "qr-code-styling": "^1.9.2",
-    "react": "^19.2.7",
+    "react": "^19.2.8",
     "react-dom": "^19.2.7"
   },
   "devDependencies": {
