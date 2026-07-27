@@ -44,7 +44,7 @@
     "@playwright/test": "^1.49.1",
     "@storybook/addon-docs": "^10.5.2",
     "@storybook/react": "^10.5.4",
-    "@storybook/react-vite": "^10.5.2",
+    "@storybook/react-vite": "^10.5.4",
     "@tailwindcss/postcss": "^4.3.2",
     "@testing-library/jest-dom": "^7.0.0",
     "@testing-library/react": "^16.1.0",
