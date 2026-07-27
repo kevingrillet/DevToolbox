@@ -35,7 +35,7 @@
     "marked": "^18.0.5",
     "qr-code-styling": "^1.9.2",
     "react": "^19.2.7",
-    "react-dom": "^19.2.7"
+    "react-dom": "^19.2.8"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.1",
