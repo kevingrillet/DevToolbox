@@ -41,7 +41,7 @@
     "@axe-core/playwright": "^4.10.1",
     "@eslint/js": "^10.0.1",
     "@lhci/cli": "^0.15.1",
-    "@playwright/test": "^1.49.1",
+    "@playwright/test": "^1.62.1",
     "@storybook/addon-docs": "^10.5.2",
     "@storybook/react": "^10.5.4",
     "@storybook/react-vite": "^10.5.4",
