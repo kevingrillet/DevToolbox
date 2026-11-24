@@ -21,6 +21,34 @@ test('le bouton de thème bascule en mode sombre', async ({ page }) => {
   await expect(html).toHaveClass(/dark/);
 });
 
+test('la page utilise la largeur du bureau et le coin GitHub suit le thème', async ({ page }) => {
+  await page.setViewportSize({ width: 1920, height: 900 });
+  await page.goto('/');
+  const main = page.getByRole('main');
+  const corner = page.getByRole('link', { name: 'Voir le code source sur GitHub' });
+  await expect(main).toHaveCSS('width', '1600px');
+  await expect(corner).toHaveAttribute('href', 'https://github.com/kevingrillet/DevToolbox');
+
+  const triangle = corner.locator('path').first();
+  const octocat = corner.locator('path').last();
+  const initialFill = await triangle.evaluate((path) => getComputedStyle(path).fill);
+  await page.getByRole('combobox', { name: 'Thème' }).selectOption('atelier');
+  await expect(triangle).not.toHaveCSS('fill', initialFill);
+  const lightFill = await triangle.evaluate((path) => getComputedStyle(path).fill);
+  const lightOctocatFill = await octocat.evaluate((path) => getComputedStyle(path).fill);
+  await page.getByRole('button', { name: 'Activer le mode sombre' }).click();
+  await expect(triangle).not.toHaveCSS('fill', lightFill);
+  await expect(octocat).not.toHaveCSS('fill', lightOctocatFill);
+
+  await page.setViewportSize({ width: 320, height: 720 });
+  await expect(main).toHaveCSS('width', '320px');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(320);
+  await expect(corner).toBeInViewport({ ratio: 1 });
+  await expect(page.getByRole('button', { name: 'Activer le mode clair' })).toBeInViewport({
+    ratio: 1,
+  });
+});
+
 test('une route inconnue affiche la 404, puis le retour ramène à l’accueil', async ({ page }) => {
   await page.goto('/#/route-inexistante');
   await expect(page.getByRole('heading', { name: 'Page introuvable' })).toBeVisible();

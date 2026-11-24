@@ -299,3 +299,24 @@ body,
 body {
   font-family: var(--font-base);
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  .github-corner:is(:hover, :focus-visible) .github-corner-arm {
+    animation: octocat-wave 560ms ease-in-out;
+  }
+}
+
+@keyframes octocat-wave {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20%,
+  60% {
+    transform: rotate(-25deg);
+  }
+  40%,
+  80% {
+    transform: rotate(10deg);
+  }
+}

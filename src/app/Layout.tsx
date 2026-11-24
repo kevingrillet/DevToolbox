@@ -14,6 +14,7 @@ import { Link } from './router';
 import { ThemeSelector } from '../components/ThemeSelector';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
+import { GitHubCorner } from '../components/GitHubCorner';
 import { useTheme } from '../hooks/useTheme';
 import { useI18n } from '../i18n/I18nProvider';
 
@@ -40,8 +41,8 @@ export function Layout({ children }: { children: ReactNode }) {
         {t('a11y.skipToContent')}
       </a>
 
-      <header className="border-b bg-surface">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4">
+      <header className="relative border-b bg-surface">
+        <div className="mx-auto flex max-w-[100rem] flex-wrap items-center justify-between gap-x-3 gap-y-2 px-4 py-4 pr-14 sm:px-6 sm:pr-20 lg:px-8 lg:pr-24 min-[112rem]:pr-8">
           <Link
             to="/"
             className="flex items-center gap-2 rounded-control text-lg font-bold text-fg"
@@ -56,14 +57,19 @@ export function Layout({ children }: { children: ReactNode }) {
             <ThemeToggle theme={mode} onToggle={toggleMode} />
           </div>
         </div>
+        <GitHubCorner />
       </header>
 
-      <main id="main" tabIndex={-1} className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
+      <main
+        id="main"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-[100rem] flex-1 px-4 py-8 sm:px-6 lg:px-8"
+      >
         {children}
       </main>
 
       <footer className="border-t bg-surface">
-        <div className="mx-auto max-w-5xl px-4 py-4 text-center text-xs text-fg-muted">
+        <div className="mx-auto max-w-[100rem] px-4 py-4 text-center text-xs text-fg-muted">
           {t('app.tagline')}
         </div>
       </footer>

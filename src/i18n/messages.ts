@@ -72,7 +72,7 @@ export interface Messages {
   };
   language: { label: string; toggle: string };
   /** Navigation transverse du shell. */
-  nav: { home: string; backToHome: string };
+  nav: { home: string; backToHome: string; github: string };
   /** Page d'accueil (liste des outils, générée depuis le registre). */
   home: {
     title: string;
@@ -396,7 +396,11 @@ const fr: Messages = {
     },
   },
   language: { label: 'Langue', toggle: 'Passer en anglais' },
-  nav: { home: 'Accueil', backToHome: '← Retour à l’accueil' },
+  nav: {
+    home: 'Accueil',
+    backToHome: '← Retour à l’accueil',
+    github: 'Voir le code source sur GitHub',
+  },
   home: {
     title: 'Outils',
     intro:
@@ -856,7 +860,7 @@ const en: Messages = {
     },
   },
   language: { label: 'Language', toggle: 'Switch to French' },
-  nav: { home: 'Home', backToHome: '← Back to home' },
+  nav: { home: 'Home', backToHome: '← Back to home', github: 'View source on GitHub' },
   home: {
     title: 'Tools',
     intro:
