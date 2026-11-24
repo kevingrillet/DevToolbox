@@ -113,7 +113,7 @@ export const TOOLS: ToolMeta[] = [
     icon: '🔍',
     titleKey: 'tools.codeLinter.title',
     descriptionKey: 'tools.codeLinter.description',
-    tags: ['lint', 'javascript', 'css', 'html', 'json', 'yaml', 'csharp', 'markdown'],
+    tags: ['lint', 'javascript', 'css', 'html', 'json', 'yaml', 'csharp', 'markdown', 'python'],
     load: () => import('./tools/code-linter'),
   },
   {

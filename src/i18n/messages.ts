@@ -23,7 +23,8 @@ export const LANGS: Lang[] = ['fr', 'en'];
  * `tools/code-linter/lib/languages/` (`Severity`, ids de langage, ids de règle).
  */
 type LinterSeverityKey = 'info' | 'warning' | 'error';
-type LinterLanguageKey = 'javascript' | 'csharp' | 'css' | 'html' | 'json' | 'markdown' | 'yaml';
+type LinterLanguageKey =
+  'javascript' | 'csharp' | 'css' | 'html' | 'json' | 'markdown' | 'python' | 'yaml';
 type LinterRuleKey =
   | 'no-var'
   | 'no-console'
@@ -48,7 +49,11 @@ type LinterRuleKey =
   | 'no-tabs'
   | 'missing-space-after-colon'
   | 'duplicate-key'
-  | 'json-syntax';
+  | 'json-syntax'
+  | 'python-tab-indent'
+  | 'python-trailing-whitespace'
+  | 'python-bare-except'
+  | 'python-line-length';
 
 export interface Messages {
   app: {
@@ -656,6 +661,7 @@ const fr: Messages = {
         html: 'HTML',
         json: 'JSON',
         markdown: 'Markdown',
+        python: 'Python',
         yaml: 'YAML',
       },
       severities: { info: 'Info', warning: 'Avertissement', error: 'Erreur' },
@@ -684,6 +690,10 @@ const fr: Messages = {
         'missing-space-after-colon': 'Espace manquant après « : »',
         'duplicate-key': 'Clé dupliquée',
         'json-syntax': 'JSON invalide',
+        'python-tab-indent': 'Préférer les espaces aux tabulations pour l’indentation',
+        'python-trailing-whitespace': 'Espaces superflus en fin de ligne',
+        'python-bare-except': 'Préciser les exceptions à intercepter dans except',
+        'python-line-length': 'Ligne de plus de 79 caractères',
       },
       tooLarge: 'Source trop volumineuse',
       tooLargeHint:
@@ -1116,6 +1126,7 @@ const en: Messages = {
         html: 'HTML',
         json: 'JSON',
         markdown: 'Markdown',
+        python: 'Python',
         yaml: 'YAML',
       },
       severities: { info: 'Info', warning: 'Warning', error: 'Error' },
@@ -1144,6 +1155,10 @@ const en: Messages = {
         'missing-space-after-colon': 'Missing space after “:”',
         'duplicate-key': 'Duplicate key',
         'json-syntax': 'Invalid JSON',
+        'python-tab-indent': 'Prefer spaces over tabs for indentation',
+        'python-trailing-whitespace': 'Trailing whitespace',
+        'python-bare-except': 'Specify which exceptions to catch in except',
+        'python-line-length': 'Line exceeds 79 characters',
       },
       tooLarge: 'Source too large',
       tooLargeHint:

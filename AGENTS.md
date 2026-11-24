@@ -121,15 +121,17 @@ graine) et **Palette** (état structuré — tableau de couleurs — hors du cac
 ### Linter de code — langages
 
 `src/tools/code-linter/lib/languages/` : un plugin `LanguageLinter` par langage
-(JS/TS, C#, CSS, HTML, JSON, Markdown, YAML). Le plugin JSON réutilise le parseur
+(JS/TS, C#, CSS, HTML, JSON, Markdown, Python, YAML). Le plugin JSON réutilise le parseur
 de `json-linter/lib/parse`. Ajouter un langage = un plugin + une entrée au registre
 `languages/index.ts` + ses labels i18n sous `tools.codeLinter.{languages,rules}`.
 
 Un plugin peut exposer un reformateur optionnel `format?(source): string`
-(best-effort, **indentation seule**, basé sur les helpers purs de `lib/format.ts` —
-`reindentBrackets`/`reindentHtml`/`cleanup*`). Absent → pas de bouton « Reformater »
+(best-effort, **indentation et nettoyage des espaces**, avec les helpers purs de
+`lib/format.ts` pour les traitements communs). Absent → pas de bouton « Reformater »
 pour ce langage. Règle d'or : à défaut de pouvoir reformater sûrement, renvoyer la
 source inchangée plutôt que risquer de la casser.
+Le reformateur Python préserve les colonnes d'indentation, les sauts de ligne et le
+contenu des chaînes. Il développe les tabulations et nettoie les fins de ligne.
 
 ## Design system (`src/components/ui/`)
 

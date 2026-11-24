@@ -118,18 +118,18 @@ format / générateur est un plugin respectant une interface commune.
 
 Tous client-side, accessibles depuis l'accueil et en deep-link (`#/<route>`) :
 
-| Outil                | Route                   | Résumé                                                                                                          |
-| -------------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------- |
-| Encodeur / Décodeur  | `#/encoder-decoder`     | Base64, URL, entités HTML, décodage JWT (sans vérif. de signature).                                             |
-| Hash / Checksum      | `#/hash-checksum`       | MD5 (maison) + SHA-1/256/512 (SubtleCrypto), texte/fichier, comparateur.                                        |
-| Données factices     | `#/fake-data-generator` | Lorem Ipsum + UUID v4, déterministe par graine (registre de plugins).                                           |
-| Palette RGAA         | `#/color-palette-rgaa`  | Contraste WCAG, conformité AA/AAA, suggestions, export CSS/JSON/Tailwind.                                       |
-| Comparateur de texte | `#/text-diff`           | Diff caractère/mot/ligne, options casse/espaces, unifié ou côte-à-côte.                                         |
-| JSON Linter / Viewer | `#/json-linter`         | Validation localisée, arbre repliable, recherche texte/JSONPath, format/minify.                                 |
-| Éditeur Markdown     | `#/markdown-editor`     | Aperçu live, HTML sanitizé (anti-XSS), export par copie, contenu d'exemple localisé.                            |
-| Linter de code       | `#/code-linter`         | JS/TS, C#, CSS, HTML, JSON, YAML, Markdown — règles heuristiques **pédagogiques**, **reformatage** best-effort. |
-| Visualiseur CSV      | `#/csv-viewer`          | Parser maison (guillemets/échappements), table **triable** par colonne, export CSV.                             |
-| Générateur de QR     | `#/qr-generator`        | Texte/URL/WiFi/vCard/géo…, personnalisation (couleurs, forme, logo), export PNG/SVG.                            |
+| Outil                | Route                   | Résumé                                                                                                   |
+| -------------------- | ----------------------- | -------------------------------------------------------------------------------------------------------- |
+| Encodeur / Décodeur  | `#/encoder-decoder`     | Base64, URL, entités HTML, décodage JWT (sans vérif. de signature).                                      |
+| Hash / Checksum      | `#/hash-checksum`       | MD5 (maison) + SHA-1/256/512 (SubtleCrypto), texte/fichier, comparateur.                                 |
+| Données factices     | `#/fake-data-generator` | Lorem Ipsum + UUID v4, déterministe par graine (registre de plugins).                                    |
+| Palette RGAA         | `#/color-palette-rgaa`  | Contraste WCAG, conformité AA/AAA, suggestions, export CSS/JSON/Tailwind.                                |
+| Comparateur de texte | `#/text-diff`           | Diff caractère/mot/ligne, options casse/espaces, unifié ou côte-à-côte.                                  |
+| JSON Linter / Viewer | `#/json-linter`         | Validation localisée, arbre repliable, recherche texte/JSONPath, format/minify.                          |
+| Éditeur Markdown     | `#/markdown-editor`     | Aperçu live, HTML sanitizé (anti-XSS), export par copie, contenu d'exemple localisé.                     |
+| Linter de code       | `#/code-linter`         | JS/TS, C#, CSS, HTML, JSON, Markdown, Python, YAML. Règles heuristiques et reformatage selon le langage. |
+| Visualiseur CSV      | `#/csv-viewer`          | Parser maison (guillemets/échappements), table **triable** par colonne, export CSV.                      |
+| Générateur de QR     | `#/qr-generator`        | Texte/URL/WiFi/vCard/géo…, personnalisation (couleurs, forme, logo), export PNG/SVG.                     |
 
 > Le linter de code est volontairement **léger et pédagogique** (heuristiques
 > regex/parsing simple) : ce n'est pas un remplaçant d'ESLint/Stylelint.

@@ -10,6 +10,7 @@ import { markdownLinter } from './markdown';
 import { csharpLinter } from './csharp';
 import { yamlLinter } from './yaml';
 import { jsonLinter } from './json';
+import { pythonLinter } from './python';
 
 export const LANGUAGES: LanguageLinter[] = [
   javascriptLinter,
@@ -18,6 +19,7 @@ export const LANGUAGES: LanguageLinter[] = [
   htmlLinter,
   jsonLinter,
   markdownLinter,
+  pythonLinter,
   yamlLinter,
 ];
 
