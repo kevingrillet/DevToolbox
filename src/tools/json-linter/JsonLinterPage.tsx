@@ -4,7 +4,7 @@
  * navigation, arbre repliable typé et copie du nœud sélectionné à droite.
  */
 import { useI18n } from '../../i18n/I18nProvider';
-import { Textarea } from '../../components/ui/Textarea';
+import { CodeTextarea } from '../../components/ui/CodeTextarea';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { Checkbox } from '../../components/ui/Checkbox';
@@ -29,7 +29,8 @@ export default function JsonLinterPage() {
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Entrée + validation */}
         <div className="flex flex-col gap-3">
-          <Textarea
+          <CodeTextarea
+            language="json"
             label={t('tools.json.input')}
             placeholder={t('tools.json.inputPlaceholder')}
             value={store.input}

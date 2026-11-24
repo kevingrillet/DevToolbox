@@ -10,7 +10,7 @@ import { Select } from '../../components/ui/Select';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { Panel } from '../../components/ui/Panel';
-import { Textarea } from '../../components/ui/Textarea';
+import { CodeTextarea } from '../../components/ui/CodeTextarea';
 import { CopyButton } from '../../components/ui/CopyButton';
 import { ColorField } from './components/ColorField';
 import { useColorPaletteStore } from './useColorPaletteStore';
@@ -171,7 +171,8 @@ export default function PalettePage() {
             ]}
           />
           <div className="mt-3">
-            <Textarea
+            <CodeTextarea
+              language={store.exportFormat === 'tailwind' ? 'javascript' : store.exportFormat}
               label={t('tools.palette.exportTitle')}
               value={store.exportText}
               readOnly

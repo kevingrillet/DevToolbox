@@ -5,13 +5,14 @@
  */
 import { useI18n } from '../../i18n/I18nProvider';
 import { Select } from '../../components/ui/Select';
-import { Textarea } from '../../components/ui/Textarea';
+import { CodeTextarea } from '../../components/ui/CodeTextarea';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { Checkbox } from '../../components/ui/Checkbox';
 import { Panel } from '../../components/ui/Panel';
 import { Callout } from '../../components/ui/Callout';
 import { Accordion } from '../../components/ui/Accordion';
+import { isCodeLanguage } from '../../lib/prism/languages';
 import { LANGUAGES } from './lib/languages';
 import { useCodeLinterStore } from './useCodeLinterStore';
 import type { Severity } from './lib/types';
@@ -26,6 +27,7 @@ const SEVERITY_ORDER: Severity[] = ['error', 'warning', 'info'];
 export default function CodeLinterPage() {
   const { t } = useI18n();
   const store = useCodeLinterStore();
+  const editorLanguage = store.languageId === 'javascript' ? 'typescript' : store.languageId;
 
   const labelOf = (ruleId: string) => {
     const rule = store.language.rules.find((r) => r.id === ruleId);
@@ -108,11 +110,12 @@ export default function CodeLinterPage() {
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Textarea
+        <CodeTextarea
           label={t('tools.codeLinter.source')}
           placeholder={t('tools.codeLinter.sourcePlaceholder')}
           value={store.source}
           onChange={(event) => store.setSource(event.target.value)}
+          language={isCodeLanguage(editorLanguage) ? editorLanguage : 'plain'}
           rows={18}
         />
 

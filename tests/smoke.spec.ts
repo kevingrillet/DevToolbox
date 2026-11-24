@@ -85,3 +85,12 @@ test("l'accueil n'a pas de violation a11y sérieuse/critique (sombre)", async ({
   await expect(page.locator('html')).toHaveClass(/dark/);
   expect(await scanSeriousA11yViolations(page)).toEqual([]);
 });
+
+test("l'éditeur Prism est accessible en modes clair et sombre", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 780 });
+  await page.goto('/#/syntax-editor');
+  await page.getByRole('textbox', { name: 'Code' }).fill('const answer = 42;');
+  expect(await scanSeriousA11yViolations(page)).toEqual([]);
+  await page.getByRole('button', { name: 'Activer le mode sombre' }).click();
+  expect(await scanSeriousA11yViolations(page)).toEqual([]);
+});

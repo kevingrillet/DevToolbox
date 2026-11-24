@@ -29,8 +29,10 @@ Storybook 10 · ESLint (flat) + Prettier · PWA.
 
 **Dépendances runtime minimales** : `react`, `react-dom`, et libs ciblées justifiées
 au cas par cas — `marked` + `dompurify` pour l'éditeur Markdown, `qr-code-styling`
-pour le générateur de QR. Chaque exception est **isolée dans une couche adaptateur**
-(ex. `qr-generator/lib/qr.ts`) et cantonnée au chunk de son outil. Toute autre logique
+pour le générateur de QR, `prismjs` pour la coloration des champs de code et de leurs
+aperçus. Chaque exception est **isolée dans une couche adaptateur**
+(ex. `qr-generator/lib/qr.ts`, `src/lib/prism/prism.ts`) et chargée via les outils
+qui l'utilisent. Toute autre logique
 (parsing, diff, hash, lint, base64…) est **codée from scratch**, pure et testée.
 
 ## Architecture & conventions
@@ -112,7 +114,7 @@ Désactivé par défaut → l'outil reste vierge ; activé → contenu restauré
 Les accès `localStorage` du hook sont défensifs (quota dépassé / storage indisponible →
 dégradation silencieuse, l'outil reste fonctionnel).
 
-Outils avec cache : **Text Diff, Éditeur Markdown, Linter, CSV, JSON, Encodeur**.
+Outils avec cache : **Text Diff, Éditeurs Markdown et Prism, Linter, CSV, JSON, Encodeur**.
 Volontairement **exclus** (le cache n'apporterait rien de cohérent) : **Hash**
 (source texte OU fichier — un fichier n'est pas persistable et les empreintes sont
 des vérifications jetables), **Faker** (sortie générée, déjà reproductible via la
@@ -135,7 +137,8 @@ contenu des chaînes. Il développe les tabulations et nettoie les fins de ligne
 
 ## Design system (`src/components/ui/`)
 
-`Button`, `Input`, `Textarea`, `Select`, `Badge`, `Panel`, `Accordion`, `CopyButton`.
+`Button`, `Input`, `Textarea`, `CodeTextarea`, `CodeBlock`, `Select`, `Badge`, `Panel`,
+`Accordion`, `CopyButton`.
 **Storybook est la source de vérité** : tout composant partagé a sa story (variants,
 états, a11y) avant d'être consommé. Helper de classes : `src/lib/cx.ts`.
 

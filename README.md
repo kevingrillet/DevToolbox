@@ -127,6 +127,7 @@ Tous client-side, accessibles depuis l'accueil et en deep-link (`#/<route>`) :
 | Comparateur de texte | `#/text-diff`           | Diff caractère/mot/ligne, options casse/espaces, unifié ou côte-à-côte.                                  |
 | JSON Linter / Viewer | `#/json-linter`         | Validation localisée, arbre repliable, recherche texte/JSONPath, format/minify.                          |
 | Éditeur Markdown     | `#/markdown-editor`     | Aperçu live, HTML sanitizé (anti-XSS), export par copie, contenu d'exemple localisé.                     |
+| Éditeur Prism        | `#/syntax-editor`       | Coloration en direct, numéros de ligne, thèmes Prism et palette personnalisable.                         |
 | Linter de code       | `#/code-linter`         | JS/TS, C#, CSS, HTML, JSON, Markdown, Python, YAML. Règles heuristiques et reformatage selon le langage. |
 | Visualiseur CSV      | `#/csv-viewer`          | Parser maison (guillemets/échappements), table **triable** par colonne, export CSV.                      |
 | Générateur de QR     | `#/qr-generator`        | Texte/URL/WiFi/vCard/géo…, personnalisation (couleurs, forme, logo), export PNG/SVG.                     |

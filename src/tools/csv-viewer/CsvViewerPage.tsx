@@ -4,7 +4,7 @@
  * inverser le sens).
  */
 import { useI18n } from '../../i18n/I18nProvider';
-import { Textarea } from '../../components/ui/Textarea';
+import { CodeTextarea } from '../../components/ui/CodeTextarea';
 import { Select } from '../../components/ui/Select';
 import { Checkbox } from '../../components/ui/Checkbox';
 import { Button } from '../../components/ui/Button';
@@ -93,7 +93,9 @@ export default function CsvViewerPage() {
       </div>
 
       <div className="mt-4">
-        <Textarea
+        <CodeTextarea
+          language="csv"
+          csvDelimiter={store.delimiter}
           label={t('tools.csv.input')}
           placeholder={t('tools.csv.inputPlaceholder')}
           value={store.input}

@@ -36,6 +36,15 @@ export interface ToolMeta {
 /** Liste ordonnée des outils disponibles (ordre d'affichage sur l'accueil). */
 export const TOOLS: ToolMeta[] = [
   {
+    id: 'syntax-editor',
+    path: '/syntax-editor',
+    icon: '🌈',
+    titleKey: 'tools.syntaxEditor.title',
+    descriptionKey: 'tools.syntaxEditor.description',
+    tags: ['prism', 'syntax', 'code', 'theme', 'editor'],
+    load: () => import('./tools/syntax-editor'),
+  },
+  {
     id: 'encoder-decoder',
     path: '/encoder-decoder',
     icon: '🔁',

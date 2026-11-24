@@ -26,6 +26,7 @@ const DELIMITER_CHAR: Record<Exclude<DelimiterChoice, 'auto'>, string> = {
 export interface CsvStore {
   input: string;
   delimiterChoice: DelimiterChoice;
+  delimiter: string;
   hasHeader: boolean;
   sortColumn: number | null;
   sortDir: SortDir;
@@ -103,6 +104,7 @@ export function useCsvStore(): CsvStore {
   return {
     input,
     delimiterChoice,
+    delimiter,
     hasHeader,
     sortColumn,
     sortDir,

@@ -16,8 +16,8 @@ describe('JwtView', () => {
     })}.signature123`;
     const result = decodeJwt(token);
     expect(result.ok).toBe(true);
-    render(<JwtView result={result} />);
-    expect(screen.getByText(/"sub": "123"/)).toBeInTheDocument();
+    const { container } = render(<JwtView result={result} />);
+    expect(container.querySelectorAll('pre code')[1]).toHaveTextContent('"sub": "123"');
     expect(screen.getByText('signature123')).toBeInTheDocument();
   });
 

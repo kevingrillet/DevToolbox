@@ -10,6 +10,7 @@ import { useI18n } from '../../../i18n/I18nProvider';
 import { Badge } from '../../../components/ui/Badge';
 import { Callout } from '../../../components/ui/Callout';
 import { Panel } from '../../../components/ui/Panel';
+import { CodeBlock } from '../../../components/ui/CodeBlock';
 import { JWT_TIME_CLAIMS, type JwtResult } from '../lib/jwt';
 
 export function JwtView({ result }: { result: JwtResult }) {
@@ -49,11 +50,11 @@ export function JwtView({ result }: { result: JwtResult }) {
       </div>
 
       <Panel title={t('tools.encoder.jwt.header')} titleLevel={3}>
-        <pre className="overflow-x-auto text-xs">{JSON.stringify(decoded.header, null, 2)}</pre>
+        <CodeBlock language="json" value={JSON.stringify(decoded.header, null, 2)} />
       </Panel>
 
       <Panel title={t('tools.encoder.jwt.payload')} titleLevel={3}>
-        <pre className="overflow-x-auto text-xs">{JSON.stringify(decoded.payload, null, 2)}</pre>
+        <CodeBlock language="json" value={JSON.stringify(decoded.payload, null, 2)} />
       </Panel>
 
       {timeRows.length > 0 && (

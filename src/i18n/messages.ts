@@ -97,6 +97,37 @@ export interface Messages {
    * (ex. `tools.encoder`), ce qui garantit la complétude fr/en par le typage.
    */
   tools: {
+    syntaxEditor: {
+      title: string;
+      description: string;
+      language: string;
+      theme: string;
+      plain: string;
+      auto: string;
+      custom: string;
+      source: string;
+      placeholder: string;
+      copy: string;
+      copied: string;
+      image: { copy: string; copied: string; downloaded: string; tooLarge: string; failed: string };
+      clear: string;
+      colorsLabel: string;
+      resetColors: string;
+      colors: Record<
+        | 'background'
+        | 'foreground'
+        | 'comment'
+        | 'keyword'
+        | 'string'
+        | 'number'
+        | 'function'
+        | 'operator'
+        | 'property'
+        | 'tag',
+        string
+      >;
+      tooLarge: string;
+    };
     encoder: {
       title: string;
       description: string;
@@ -424,6 +455,44 @@ const fr: Messages = {
     cacheHint: 'Mémorise le contenu dans ce navigateur.',
   },
   tools: {
+    syntaxEditor: {
+      title: 'Éditeur Prism',
+      description:
+        'Éditeur de code avec coloration syntaxique, numéros de ligne et thèmes personnalisables.',
+      language: 'Langage',
+      theme: 'Thème Prism',
+      plain: 'Texte brut',
+      auto: 'Automatique (DevToolbox)',
+      custom: 'Personnalisé',
+      source: 'Code',
+      placeholder: 'Saisir ou coller du code…',
+      copy: 'Copier le code',
+      copied: 'Copié ✓',
+      image: {
+        copy: 'Copier en image',
+        copied: 'Image copiée',
+        downloaded: 'PNG téléchargé',
+        tooLarge: 'Le bloc est trop grand pour une image. Copiez un extrait plus court.',
+        failed: 'Impossible de créer l’image du code.',
+      },
+      clear: 'Effacer le code',
+      colorsLabel: 'Couleurs du thème personnalisé',
+      resetColors: 'Réinitialiser les couleurs',
+      colors: {
+        background: 'Fond',
+        foreground: 'Texte',
+        comment: 'Commentaires',
+        keyword: 'Mots-clés',
+        string: 'Chaînes',
+        number: 'Nombres',
+        function: 'Fonctions',
+        operator: 'Opérateurs',
+        property: 'Propriétés',
+        tag: 'Balises',
+      },
+      tooLarge:
+        'La coloration est suspendue au-delà de 50 000 caractères. L’édition et les numéros de ligne restent disponibles.',
+    },
     encoder: {
       title: 'Encodeur / Décodeur',
       description: 'Base64, URL, entités HTML et décodage de JWT — en direct, hors-ligne.',
@@ -889,6 +958,43 @@ const en: Messages = {
     cacheHint: 'Remembers the content in this browser.',
   },
   tools: {
+    syntaxEditor: {
+      title: 'Prism Editor',
+      description: 'Code editor with syntax highlighting, line numbers and customizable themes.',
+      language: 'Language',
+      theme: 'Prism theme',
+      plain: 'Plain text',
+      auto: 'Automatic (DevToolbox)',
+      custom: 'Custom',
+      source: 'Code',
+      placeholder: 'Type or paste code…',
+      copy: 'Copy code',
+      copied: 'Copied ✓',
+      image: {
+        copy: 'Copy as image',
+        copied: 'Image copied',
+        downloaded: 'PNG downloaded',
+        tooLarge: 'The code block is too large for an image. Copy a shorter excerpt.',
+        failed: 'Could not create the code image.',
+      },
+      clear: 'Clear code',
+      colorsLabel: 'Custom theme colors',
+      resetColors: 'Reset colors',
+      colors: {
+        background: 'Background',
+        foreground: 'Text',
+        comment: 'Comments',
+        keyword: 'Keywords',
+        string: 'Strings',
+        number: 'Numbers',
+        function: 'Functions',
+        operator: 'Operators',
+        property: 'Properties',
+        tag: 'Tags',
+      },
+      tooLarge:
+        'Highlighting is paused above 50,000 characters. Editing and line numbers are still available.',
+    },
     encoder: {
       title: 'Encoder / Decoder',
       description: 'Base64, URL, HTML entities and JWT decoding — live and offline.',

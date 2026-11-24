@@ -7,7 +7,7 @@
  * générés (pas de plugin typographie), en s'appuyant sur les tokens de thème.
  */
 import { useI18n } from '../../i18n/I18nProvider';
-import { Textarea } from '../../components/ui/Textarea';
+import { CodeTextarea } from '../../components/ui/CodeTextarea';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { Checkbox } from '../../components/ui/Checkbox';
@@ -77,7 +77,8 @@ export default function MarkdownEditorPage() {
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Textarea
+        <CodeTextarea
+          language="markdown"
           label={t('tools.markdown.editor')}
           placeholder={t('tools.markdown.editorPlaceholder')}
           value={store.input}

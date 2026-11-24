@@ -8,7 +8,7 @@
  */
 import { useI18n } from '../../i18n/I18nProvider';
 import { Select } from '../../components/ui/Select';
-import { Textarea } from '../../components/ui/Textarea';
+import { CodeTextarea } from '../../components/ui/CodeTextarea';
 import { Button } from '../../components/ui/Button';
 import { Checkbox } from '../../components/ui/Checkbox';
 import { CopyButton } from '../../components/ui/CopyButton';
@@ -20,6 +20,7 @@ export default function EncoderPage() {
   const { t } = useI18n();
   const store = useEncoderStore();
   const { codecResult, jwtResult, isJwt } = store;
+  const isHtml = store.formatId === 'html-entities';
 
   const formatOptions = FORMATS.map((format) => ({ value: format.id, label: t(format.labelKey) }));
   const directionOptions = [
@@ -70,7 +71,8 @@ export default function EncoderPage() {
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Textarea
+        <CodeTextarea
+          language={isHtml && store.direction === 'encode' ? 'html' : 'plain'}
           label={t('tools.encoder.input')}
           placeholder={t('tools.encoder.inputPlaceholder')}
           value={store.input}
@@ -83,7 +85,8 @@ export default function EncoderPage() {
             jwtResult && <JwtView result={jwtResult} />
           ) : (
             <>
-              <Textarea
+              <CodeTextarea
+                language={isHtml && store.direction === 'decode' ? 'html' : 'plain'}
                 label={t('tools.encoder.output')}
                 value={outputValue}
                 error={outputError}

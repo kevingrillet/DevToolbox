@@ -10,6 +10,7 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import QRCodeStyling from 'qr-code-styling';
+import { canCopyPng, canvasToPng, copyPng } from '../../../lib/canvasPng';
 import {
   createQr,
   downloadQr,
@@ -125,21 +126,11 @@ export function QrPreview({
     // Firefox < 127 et navigateurs anciens n'exposent pas ClipboardItem / write
     // d'images : on bascule sur l'indication « clic droit » plutôt que d'échouer
     // en silence.
-    if (!canvas || typeof ClipboardItem === 'undefined' || !navigator.clipboard?.write) {
+    if (!canvas || !canCopyPng()) {
       flashCopyError();
       return;
     }
-    // Safari exige que le ClipboardItem soit construit SYNCHRONEMENT dans le
-    // gestionnaire de clic (préservation du « user gesture ») : on lui passe une
-    // *promesse* de blob plutôt que d'attendre le callback de toBlob.
-    const blob = new Promise<Blob>((resolve, reject) => {
-      canvas.toBlob(
-        (result) => (result ? resolve(result) : reject(new Error('toBlob a renvoyé null'))),
-        'image/png',
-      );
-    });
-    void navigator.clipboard
-      .write([new ClipboardItem({ 'image/png': blob })])
+    void copyPng(canvasToPng(canvas))
       .then(() => {
         setCopied(true);
         window.setTimeout(() => setCopied(false), 1500);

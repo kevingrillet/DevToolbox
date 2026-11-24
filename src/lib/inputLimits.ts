@@ -22,6 +22,8 @@ export const INPUT_LIMITS = {
   textDiff: 2_000_000,
   /** Linter de code : passes regex/parsing léger. ~1 Mo. */
   codeLinter: 1_000_000,
+  /** Coloration interactive : le champ reste utilisable en texte brut au-delà. */
+  syntaxHighlight: 50_000,
 } as const;
 
 /** Vrai si `text` dépasse `max` caractères. Pur, sans effet de bord. */

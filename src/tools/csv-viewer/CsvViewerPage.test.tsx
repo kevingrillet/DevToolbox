@@ -9,7 +9,7 @@ describe('CsvViewerPage', () => {
     fireEvent.change(screen.getAllByRole('textbox')[0], {
       target: { value: 'name,age\nAlice,30' },
     });
-    await waitFor(() => expect(screen.getByText('Alice')).toBeInTheDocument());
+    expect(await screen.findByRole('cell', { name: 'Alice' })).toBeInTheDocument();
   });
 
   it('le bouton Exporter est désactivé à vide puis déclenche un téléchargement', async () => {
@@ -26,8 +26,7 @@ describe('CsvViewerPage', () => {
     fireEvent.change(screen.getAllByRole('textbox')[0], {
       target: { value: 'name,age\nAlice,30' },
     });
-    await waitFor(() => expect(screen.getByText('Alice')).toBeInTheDocument());
-    expect(exportBtn).toBeEnabled();
+    await waitFor(() => expect(exportBtn).toBeEnabled());
 
     fireEvent.click(exportBtn);
     expect(createUrl).toHaveBeenCalled();
