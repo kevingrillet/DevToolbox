@@ -3,9 +3,8 @@
  *
  * Stratégie :
  *  - navigations : réseau d'abord, repli sur l'app shell en cache (offline) ;
- *  - autres GET de même origine (JS/CSS/icônes, aux noms hashés) : « stale-while-
- *    revalidate » — on sert la version en cache si elle existe et on rafraîchit en
- *    arrière-plan.
+ *  - fichiers buildés avec hash : priorité au précache (le hash fixe le contenu) ;
+ *  - autres GET de même origine : « stale-while-revalidate ».
  *
  * Précache : à l'install, on met en cache l'app shell ET tous les assets buildés
  * (chunks JS/CSS hashés, y compris les outils chargés à la demande). La liste et
@@ -22,6 +21,9 @@ const APP_SHELL = ['./', './index.html', './favicon.svg', './manifest.webmanifes
 // Remplacé au build par la liste des assets hashés émis par Vite (vide en dev,
 // où le service worker n'est de toute façon pas enregistré).
 const PRECACHE_ASSETS = [];
+const PRECACHE_URLS = new Set(
+  PRECACHE_ASSETS.map((path) => new URL(path, self.registration.scope).href),
+);
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -53,6 +55,17 @@ self.addEventListener('fetch', (event) => {
       fetch(request).catch(() =>
         caches.match('./index.html').then((cached) => cached || caches.match('./')),
       ),
+    );
+    return;
+  }
+
+  if (PRECACHE_URLS.has(request.url)) {
+    // Les modules et CSS peuvent être préchargés avec des en-têtes différents
+    // de ceux de l'installation du SW (Vary: Origin en prévisualisation Vite).
+    event.respondWith(
+      caches
+        .match(request, { cacheName: CACHE, ignoreVary: true })
+        .then((cached) => cached || fetch(request)),
     );
     return;
   }
